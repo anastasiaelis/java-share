@@ -1,0 +1,1171 @@
+{
+	"info": {
+		"_postman_id": "5f9d5a92-2a94-4aa9-b742-d0b82c36f658",
+		"name": "Sprint 16 ShareIt Rework 07.24",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "23073145",
+		"_collection_link": "https://universal-shadow-295426.postman.co/workspace/My-Workspace~4200f6aa-0504-44b1-8a1d-707d0dcbd5ce/collection/13708500-5f9d5a92-2a94-4aa9-b742-d0b82c36f658?action=share&source=collection_link&creator=23073145"
+	},
+	"item": [
+		{
+			"name": "Item",
+			"item": [
+				{
+					"name": "Create Item",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const main = async () => {\r",
+									"    const api = new API(pm);\r",
+									"    const rnd = new RandomUtils();\r",
+									"\r",
+									"    let film1, film2, stringToSearch;\r",
+									"    try {\r",
+									"        user1 = rnd.getUser();\r",
+									"        user = await api.addUser(user1);\r",
+									"        pm.collectionVariables.set(\"userId\", user.id);\r",
+									"    } catch(err) {\r",
+									"        console.error(\"Ошибка при подготовке тестовых данных.\", err);\r",
+									"    }\r",
+									"\r",
+									"};\r",
+									"\r",
+									"const interval = setInterval(() => {}, 1000);\r",
+									"\r",
+									"setTimeout(async () => \r",
+									"    {\r",
+									"        try {\r",
+									"            await main();\r",
+									"        } catch (e) {\r",
+									"            console.error(e);\r",
+									"        } finally {\r",
+									"            clearInterval(interval);\r",
+									"        }\r",
+									"    },  \r",
+									"    100 \r",
+									");"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "X-Sharer-User-Id",
+								"value": "{{userId}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Пакет для пакетов\",\n    \"description\": \"Прозрачный пакет для хранения пакетов. Пожалуйста не пытайтесь забронировать на срок больше недели. Это дефицитная вещь и такие заявки будут сразу отменяться.\",\n    \"available\": true\n}"
+						},
+						"url": {
+							"raw": "localhost:8080/items",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"items"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Item on request",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const main = async () => {\r",
+									"    const api = new API(pm);\r",
+									"    const rnd = new RandomUtils();\r",
+									"\r",
+									"    let film1, film2, stringToSearch;\r",
+									"    try {\r",
+									"        user1 = await api.addUser(rnd.getUser());\r",
+									"        request1 = await api.addRequest(rnd.getRequest(), user1.id);\r",
+									"        user2 = await api.addUser(rnd.getUser());\r",
+									"        pm.collectionVariables.set(\"userId\", user2.id);\r",
+									"        pm.collectionVariables.set(\"requestId\", request1.id);\r",
+									"\r",
+									"    } catch(err) {\r",
+									"        console.error(\"Ошибка при подготовке тестовых данных.\", err);\r",
+									"    }\r",
+									"\r",
+									"};\r",
+									"\r",
+									"const interval = setInterval(() => {}, 1000);\r",
+									"\r",
+									"setTimeout(async () => \r",
+									"    {\r",
+									"        try {\r",
+									"            await main();\r",
+									"        } catch (e) {\r",
+									"            console.error(e);\r",
+									"        } finally {\r",
+									"            clearInterval(interval);\r",
+									"        }\r",
+									"    },  \r",
+									"    100 \r",
+									");"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "X-Sharer-User-Id",
+								"value": "2"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Электросамокат Practicum Electric Scooter\",\n    \"description\": \"Электросамокат Practicum Mi Electric Scooter 3 разгоняется до 25 км/ч и способен подниматься в гору с уклоном до 16 градусов.\",\n    \"available\": true,\n    \"requestId\": {{requestId}}\n}"
+						},
+						"url": {
+							"raw": "localhost:8080/items",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"items"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Item without name on request",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const main = async () => {\r",
+									"    const api = new API(pm);\r",
+									"    const rnd = new RandomUtils();\r",
+									"\r",
+									"    let film1, film2, stringToSearch;\r",
+									"    try {\r",
+									"        user1 = await api.addUser(rnd.getUser());\r",
+									"        request1 = await api.addRequest(rnd.getRequest(), user1.id);\r",
+									"        user2 = await api.addUser(rnd.getUser());\r",
+									"        pm.collectionVariables.set(\"userId\", user2.id);\r",
+									"        pm.collectionVariables.set(\"requestId\", request1.id);\r",
+									"\r",
+									"    } catch(err) {\r",
+									"        console.error(\"Ошибка при подготовке тестовых данных.\", err);\r",
+									"    }\r",
+									"\r",
+									"};\r",
+									"\r",
+									"const interval = setInterval(() => {}, 1000);\r",
+									"\r",
+									"setTimeout(async () => \r",
+									"    {\r",
+									"        try {\r",
+									"            await main();\r",
+									"        } catch (e) {\r",
+									"            console.error(e);\r",
+									"        } finally {\r",
+									"            clearInterval(interval);\r",
+									"        }\r",
+									"    },  \r",
+									"    100 \r",
+									");"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is not 200 or 201\", function () {\r",
+									"    pm.expect(pm.response.code).not.eql(200);\r",
+									"    pm.expect(pm.response.code).not.eql(201);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "X-Sharer-User-Id",
+								"value": "{{userId}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"description\": \"Электросамокат Practicum Mi Electric Scooter 3 разгоняется до 25 км/ч и способен подниматься в гору с уклоном до 16 градусов.\",\n    \"available\": true,\n    \"requestId\": {{requestId}}\n}"
+						},
+						"url": {
+							"raw": "localhost:8080/items",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"items"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Item without description on request",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const main = async () => {\r",
+									"    const api = new API(pm);\r",
+									"    const rnd = new RandomUtils();\r",
+									"\r",
+									"    let film1, film2, stringToSearch;\r",
+									"    try {\r",
+									"        user1 = await api.addUser(rnd.getUser());\r",
+									"        request1 = await api.addRequest(rnd.getRequest(), user1.id);\r",
+									"        user2 = await api.addUser(rnd.getUser());\r",
+									"        pm.collectionVariables.set(\"userId\", user2.id);\r",
+									"        pm.collectionVariables.set(\"requestId\", request1.id);\r",
+									"\r",
+									"    } catch(err) {\r",
+									"        console.error(\"Ошибка при подготовке тестовых данных.\", err);\r",
+									"    }\r",
+									"\r",
+									"};\r",
+									"\r",
+									"const interval = setInterval(() => {}, 1000);\r",
+									"\r",
+									"setTimeout(async () => \r",
+									"    {\r",
+									"        try {\r",
+									"            await main();\r",
+									"        } catch (e) {\r",
+									"            console.error(e);\r",
+									"        } finally {\r",
+									"            clearInterval(interval);\r",
+									"        }\r",
+									"    },  \r",
+									"    100 \r",
+									");"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is not 200 or 201\", function () {\r",
+									"    pm.expect(pm.response.code).not.eql(200);\r",
+									"    pm.expect(pm.response.code).not.eql(201);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "X-Sharer-User-Id",
+								"value": "{{userId}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Электросамокат Practicum Electric Scooter\",\n    \"available\": true,\n    \"requestId\": {{requestId}}\n}"
+						},
+						"url": {
+							"raw": "localhost:8080/items",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"items"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Item without available on request Copy",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const main = async () => {\r",
+									"    const api = new API(pm);\r",
+									"    const rnd = new RandomUtils();\r",
+									"\r",
+									"    let film1, film2, stringToSearch;\r",
+									"    try {\r",
+									"        user1 = await api.addUser(rnd.getUser());\r",
+									"        request1 = await api.addRequest(rnd.getRequest(), user1.id);\r",
+									"        user2 = await api.addUser(rnd.getUser());\r",
+									"        pm.collectionVariables.set(\"userId\", user2.id);\r",
+									"        pm.collectionVariables.set(\"requestId\", request1.id);\r",
+									"\r",
+									"    } catch(err) {\r",
+									"        console.error(\"Ошибка при подготовке тестовых данных.\", err);\r",
+									"    }\r",
+									"\r",
+									"};\r",
+									"\r",
+									"const interval = setInterval(() => {}, 1000);\r",
+									"\r",
+									"setTimeout(async () => \r",
+									"    {\r",
+									"        try {\r",
+									"            await main();\r",
+									"        } catch (e) {\r",
+									"            console.error(e);\r",
+									"        } finally {\r",
+									"            clearInterval(interval);\r",
+									"        }\r",
+									"    },  \r",
+									"    100 \r",
+									");"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is not 200 or 201\", function () {\r",
+									"    pm.expect(pm.response.code).not.eql(200);\r",
+									"    pm.expect(pm.response.code).not.eql(201);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "X-Sharer-User-Id",
+								"value": "{{userId}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Электросамокат Practicum Electric Scooter\",\n    \"description\": \"Электросамокат Practicum Mi Electric Scooter 3 разгоняется до 25 км/ч и способен подниматься в гору с уклоном до 16 градусов.\",\n    \"requestId\": {{requestId}}\n}"
+						},
+						"url": {
+							"raw": "localhost:8080/items",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"items"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add comment",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const main = async () => {\r",
+									"    const api = new API(pm);\r",
+									"    const rnd = new RandomUtils();\r",
+									"\r",
+									"    let film1, film2, stringToSearch;\r",
+									"    try {\r",
+									"        user1 = await api.addUser(rnd.getUser());\r",
+									"        item1 = await api.addItem(rnd.getItem(), user1.id);\r",
+									"        user2 = await api.addUser(rnd.getUser());\r",
+									"        pm.collectionVariables.set(\"userId\", user2.id);\r",
+									"        pm.collectionVariables.set(\"itemId\", item1.id);\r",
+									"\r",
+									"    } catch(err) {\r",
+									"        console.error(\"Ошибка при подготовке тестовых данных.\", err);\r",
+									"    }\r",
+									"\r",
+									"};\r",
+									"\r",
+									"const interval = setInterval(() => {}, 1000);\r",
+									"\r",
+									"setTimeout(async () => \r",
+									"    {\r",
+									"        try {\r",
+									"            await main();\r",
+									"        } catch (e) {\r",
+									"            console.error(e);\r",
+									"        } finally {\r",
+									"            clearInterval(interval);\r",
+									"        }\r",
+									"    },  \r",
+									"    100 \r",
+									");"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "X-Sharer-User-Id",
+								"value": "{{userId}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"text\": \"Очень классный носок! Подходит для создания акцентов в образе. Дырка на пятке позволяет ступне дышать.\"\n}"
+						},
+						"url": {
+							"raw": "localhost:8080/items/{{itemId}}/comment",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"items",
+								"{{itemId}}",
+								"comment"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Item",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const main = async () => {\r",
+									"    const api = new API(pm);\r",
+									"    const rnd = new RandomUtils();\r",
+									"\r",
+									"    let film1, film2, stringToSearch;\r",
+									"    try {\r",
+									"        user1 = await api.addUser(rnd.getUser());\r",
+									"        item1 = await api.addItem(rnd.getItem(), user1.id);\r",
+									"        pm.collectionVariables.set(\"userId\", user1.id);\r",
+									"        pm.collectionVariables.set(\"itemId\", item1.id);\r",
+									"\r",
+									"    } catch(err) {\r",
+									"        console.error(\"Ошибка при подготовке тестовых данных.\", err);\r",
+									"    }\r",
+									"\r",
+									"};\r",
+									"\r",
+									"const interval = setInterval(() => {}, 1000);\r",
+									"\r",
+									"setTimeout(async () => \r",
+									"    {\r",
+									"        try {\r",
+									"            await main();\r",
+									"        } catch (e) {\r",
+									"            console.error(e);\r",
+									"        } finally {\r",
+									"            clearInterval(interval);\r",
+									"        }\r",
+									"    },  \r",
+									"    100 \r",
+									");"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "X-Sharer-User-Id",
+								"value": "{{userId}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"id\": {{itemId}},\n    \"name\": \"Левый носок\",\n    \"description\": \"Носок для левой ноги. На месте большого пальца отверстие круглой формы. Дам поносить за небольшое вознаграждение.\",\n    \"available\": false\n}"
+						},
+						"url": {
+							"raw": "localhost:8080/items",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"items"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get all user Items",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const main = async () => {\r",
+									"    const api = new API(pm);\r",
+									"    const rnd = new RandomUtils();\r",
+									"\r",
+									"    let film1, film2, stringToSearch;\r",
+									"    try {\r",
+									"        user1 = await api.addUser(rnd.getUser());\r",
+									"        item1 = await api.addItem(rnd.getItem(), user1.id);\r",
+									"        item2 = await api.addItem(rnd.getItem(), user1.id);\r",
+									"        pm.collectionVariables.set(\"userId\", user1.id);\r",
+									"\r",
+									"    } catch(err) {\r",
+									"        console.error(\"Ошибка при подготовке тестовых данных.\", err);\r",
+									"    }\r",
+									"\r",
+									"};\r",
+									"\r",
+									"const interval = setInterval(() => {}, 1000);\r",
+									"\r",
+									"setTimeout(async () => \r",
+									"    {\r",
+									"        try {\r",
+									"            await main();\r",
+									"        } catch (e) {\r",
+									"            console.error(e);\r",
+									"        } finally {\r",
+									"            clearInterval(interval);\r",
+									"        }\r",
+									"    },  \r",
+									"    100 \r",
+									");"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "X-Sharer-User-Id",
+								"value": "{{userId}}"
+							}
+						],
+						"url": {
+							"raw": "localhost:8080/items",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"items"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get user Item",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "X-Sharer-User-Id",
+								"value": "1"
+							}
+						],
+						"url": {
+							"raw": "localhost:8080/items/2",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"items",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Search Items",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "X-Sharer-User-Id",
+								"value": "1"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"id\": 1,\n    \"name\": \"Левый носок\",\n    \"description\": \"Носок для левой ноги. На месте большого пальца отверстие круглой формы. Дам поносить за небольшое вознаграждение.\",\n    \"available\": false\n}"
+						},
+						"url": {
+							"raw": "localhost:8080/items/search?text=Левый",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"items",
+								"search"
+							],
+							"query": [
+								{
+									"key": "text",
+									"value": "Левый"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "booking",
+			"item": [
+				{
+					"name": "Book Item",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "X-Sharer-User-Id",
+								"value": "2"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"itemId\": 2,\n    \"start\": \"2022-07-23T13:00:00\",\n    \"end\": \"2035-07-28T23:59:59\"\n}"
+						},
+						"url": {
+							"raw": "localhost:8080/bookings",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"bookings"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get  user bookings",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "X-Sharer-User-Id",
+								"value": "2"
+							}
+						],
+						"url": {
+							"raw": "localhost:8080/bookings?state=all",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"bookings"
+							],
+							"query": [
+								{
+									"key": "state",
+									"value": "all"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get  user booking by id",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "X-Sharer-User-Id",
+								"value": "2"
+							}
+						],
+						"url": {
+							"raw": "localhost:8080/bookings/1",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"bookings",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Approve Booking",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "X-Sharer-User-Id",
+								"value": "2"
+							}
+						],
+						"url": {
+							"raw": "localhost:8080/bookings/1?approved=true",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"bookings",
+								"1"
+							],
+							"query": [
+								{
+									"key": "approved",
+									"value": "true"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "requests",
+			"item": [
+				{
+					"name": "Create request",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "X-Sharer-User-Id",
+								"value": "1"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{    \n    \"description\": \"Возьму попользоваться электросамокат\"\n}"
+						},
+						"url": {
+							"raw": "localhost:8080/requests",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"requests"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get  user requests",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "X-Sharer-User-Id",
+								"value": "1"
+							}
+						],
+						"url": {
+							"raw": "localhost:8080/requests",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"requests"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get  user request by id",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "X-Sharer-User-Id",
+								"value": "1"
+							}
+						],
+						"url": {
+							"raw": "localhost:8080/requests/4",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"requests",
+								"4"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "user",
+			"item": [
+				{
+					"name": "Create user",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Вася\",\n    \"email\": \"v.pupking@practicum-mail.ru\"\n}"
+						},
+						"url": {
+							"raw": "localhost:8080/users",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get  users",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "localhost:8080/users",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"users"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					"API = class {\r",
+					"    constructor(postman, verbose = false, baseUrl = \"http://localhost:8080\") {\r",
+					"        this.baseUrl = baseUrl;\r",
+					"        this.pm = postman;\r",
+					"        this._verbose = verbose;\r",
+					"    }\r",
+					"\r",
+					"    async addUser(user, verbose=null) {\r",
+					"        return this.post(\"/users\", user, \"Ошибка при добавлении нового пользователя: \", verbose);\r",
+					"    }\r",
+					"\r",
+					"    async addItem(item, id, verbose=null) {\r",
+					"        return this.post(\"/items\", item, id, \"Ошибка при добавлении новой вещи: \", verbose);\r",
+					"    }\r",
+					"\r",
+					"    async addItemForRequest(item, id, verbose=null) {\r",
+					"        return this.post(\"/items\", item, id, \"Ошибка при добавлении новой вещи для запроса: \", verbose);\r",
+					"    }\r",
+					"\r",
+					"    async addRequest(request, id, verbose=null) {\r",
+					"        return this.post(\"/requests\", request, id, \"Ошибка при добавлении нового запроса: \", verbose);\r",
+					"    }\r",
+					"    \r",
+					"    async post(path, body, errorText = \"Ошибка при выполнении post-запроса: \", verbose=null) {\r",
+					"        return this.sendRequest(\"POST\", path, body, errorText, verbose);\r",
+					"    }\r",
+					"\r",
+					"    async patch(path, body = null, errorText = \"Ошибка при выполнении patch-запроса: \", verbose=null) {\r",
+					"        return this.sendRequest(\"PATCH\", path, body, errorText, verbose);\r",
+					"    }\r",
+					"\r",
+					"    async get(path, body = null, errorText = \"Ошибка при выполнении get-запроса: \", verbose=null) {\r",
+					"        return this.sendRequest(\"GET\", path, body, errorText, verbose);\r",
+					"    }\r",
+					"\r",
+					"    async put(path, body = null, errorText = \"Ошибка при выполнении put-запроса: \", verbose=null) {\r",
+					"        return this.sendRequest(\"PUT\", path, body, errorText, verbose);\r",
+					"    }\r",
+					"\r",
+					"    async delete(path, body = null, errorText = \"Ошибка при выполнении delte-запроса: \", verbose=null) {\r",
+					"        return this.sendRequest(\"DELETE\", path, body, errorText, verbose);\r",
+					"    }\r",
+					"\r",
+					"    async sendRequest(method, path, id=1, body=null, errorText = \"Ошибка при выполнении запроса: \", verbose=null) {\r",
+					"        return new Promise((resolve, reject) => {\r",
+					"            verbose = verbose == null ? this._verbose : verbose;\r",
+					"            const request = {\r",
+					"                url: this.baseUrl + path,\r",
+					"                method: method,\r",
+					"                body: body == null ? \"\" : JSON.stringify(body),\r",
+					"                header: { \"Content-Type\": \"application/json\",\r",
+					"                        \"X-Sharer-User-Id\": id },\r",
+					"            };\r",
+					"            if(verbose) {\r",
+					"                console.log(\"Отправляю запрос: \", request);\r",
+					"            }\r",
+					"\r",
+					"            try {\r",
+					"                this.pm.sendRequest(request, (error, response) => {\r",
+					"                    if(error || (response.code >= 400 && response.code <= 599)) {\r",
+					"                        let err = error ? error : JSON.stringify(response.json());\r",
+					"                        console.error(\"При выполнении запроса к серверу возникла ошика.\\n\", err,\r",
+					"                             \"\\nДля отладки проблемы повторите такой же запрос к вашей программе \" + \r",
+					"                             \"на локальном компьютере. Данные запроса:\\n\", JSON.stringify(request));\r",
+					"\r",
+					"                        reject(new Error(errorText + err));\r",
+					"                    }\r",
+					"                    if(verbose) {\r",
+					"                        console.log(\"Результат обработки запроса: код состояния - \", response.code, \", тело: \", response.json());\r",
+					"                    }\r",
+					"                    if (response.stream.length === 0){\r",
+					"                        resolve(null);\r",
+					"                    }else{\r",
+					"                        resolve(response.json());\r",
+					"                    }\r",
+					"                });\r",
+					"                \r",
+					"            } catch(err) {\r",
+					"                if(verbose) {\r",
+					"                    console.error(errorText, err);\r",
+					"                }\r",
+					"                return Promise.reject(err);\r",
+					"            }\r",
+					"        });\r",
+					"    }\r",
+					"};\r",
+					"\r",
+					"RandomUtils = class {\r",
+					"    constructor() {}\r",
+					"\r",
+					"    getUser() {\r",
+					"        return {\r",
+					"            name: pm.variables.replaceIn('{{$randomFullName}}'),\r",
+					"            email: pm.variables.replaceIn('{{$randomEmail}}'),\r",
+					"        };\r",
+					"    }\r",
+					"\r",
+					"    getRequest() {\r",
+					"        return {\r",
+					"            description: this.getWord(50)\r",
+					"        };\r",
+					"    }\r",
+					"\r",
+					"    getItem() {\r",
+					"        return {\r",
+					"            name: this.getWord(10),\r",
+					"            description: this.getWord(50),\r",
+					"            available: pm.variables.replaceIn('{{$$randomBoolean}}')\t\r",
+					"        };\r",
+					"    }\r",
+					"\r",
+					"    getItemForRequest(id) {\r",
+					"        return {\r",
+					"            name: this.getWord(10),\r",
+					"            description: this.getWord(50),\r",
+					"            available: pm.variables.replaceIn('{{$$randomBoolean}}'),\r",
+					"            requestId: id\r",
+					"        };\r",
+					"    }\r",
+					"\r",
+					"    getFilm(director=null) {\r",
+					"        let date = new Date(new Date(1960, 0, 1).getTime() + Math.random() * (new Date(2010, 0, 1).getTime() - new Date(1960, 0, 1).getTime()));\r",
+					"        var toReturn = {\r",
+					"            name: this.getWord(15),\r",
+					"            description: this.getWord(50),\r",
+					"            releaseDate: date.toISOString().slice(0,10),\r",
+					"            duration: Math.floor(Math.random() * (180 - 60 + 1) + 60),\r",
+					"            mpa: { id: Math.floor(Math.random() * (5 - 1 + 1) + 1)},\r",
+					"            genres: [{ id: Math.floor(Math.random() * (6 - 1 + 1) + 1)}]\r",
+					"        };\r",
+					"        if (director!==null)\r",
+					"            toReturn.directors = [{ id: director.id}];\r",
+					"        return toReturn;\r",
+					"    }\r",
+					"\r",
+					"\r",
+					"    getWord(length = 1) {\r",
+					"        let result = '';\r",
+					"        const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';\r",
+					"        const charactersLength = characters.length;\r",
+					"        let counter = 0;\r",
+					"        while (counter < length) {\r",
+					"            result += characters.charAt(Math.floor(Math.random() * charactersLength));\r",
+					"            counter += 1;\r",
+					"        }\r",
+					"        return result;\r",
+					"    }\r",
+					"\r",
+					"        getName(length = 1) {\r",
+					"        let result = '';\r",
+					"        const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';\r",
+					"        const charactersLength = characters.length;\r",
+					"        let counter = 0;\r",
+					"        while (counter < length) {\r",
+					"            result += characters.charAt(Math.floor(Math.random() * charactersLength));\r",
+					"            counter += 1;\r",
+					"        }\r",
+					"        return result;\r",
+					"    }\r",
+					"\r",
+					"}"
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}
