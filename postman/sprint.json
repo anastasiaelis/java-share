@@ -224,7 +224,7 @@
 							"script": {
 								"exec": [
 									"pm.test(\"Status code is 409\", function () {\r",
-									"    pm.response.to.have.status(500);\r",
+									"    pm.response.to.have.status(409);\r",
 									"});\r",
 									"pm.test(\"Response have body\", function () {\r",
 									"    pm.response.to.be.withBody;\r",
@@ -694,7 +694,7 @@
 							"script": {
 								"exec": [
 									"pm.test(\"Status code is 409\", function () {\r",
-									"    pm.response.to.have.status(500);\r",
+									"    pm.response.to.have.status(409);\r",
 									"});\r",
 									"pm.test(\"Response have body\", function () {\r",
 									"    pm.response.to.be.withBody;\r",
