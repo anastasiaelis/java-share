@@ -76,9 +76,7 @@ public class UserServiceImpl implements UserService {
                 .map(UserMapper::toUserDto)
                 .collect(Collectors.toList());
     }
-
     private boolean userWithEmailExists(String email) {
         return userRepository.findAll().stream().map(User::getEmail).anyMatch(email::equals);
     }
-
 }
