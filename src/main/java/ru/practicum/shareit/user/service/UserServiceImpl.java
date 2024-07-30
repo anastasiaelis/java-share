@@ -1,6 +1,7 @@
 package ru.practicum.shareit.user.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.exceptions.NotFoundException;
@@ -8,6 +9,7 @@ import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.UserDto;
 import ru.practicum.shareit.user.UserMapper;
 import ru.practicum.shareit.user.repository.UserRepository;
+import ru.practicum.shareit.exceptions.NotUniqueEmailException;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -24,7 +26,11 @@ public class UserServiceImpl implements UserService {
     public UserDto add(UserDto userDto) {
         User user = UserMapper.toUser(userDto);
         userRepository.save(user);
-        return UserMapper.toUserDto(user);
+        try {
+            return UserMapper.toUserDto(user);
+        } catch (DataIntegrityViolationException e) {
+            throw new NotUniqueEmailException("Адрес электронной почты уже используется другим пользователем.");
+        }
     }
 
     @Override
