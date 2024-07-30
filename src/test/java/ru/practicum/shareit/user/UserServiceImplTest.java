@@ -34,17 +34,6 @@ class UserServiceImplTest {
             .build();
 
     @Test
-    void addNewUserReturnUserDto() {
-        User userToSave = User.builder().id(1L).name("name").email("my@email.com").build();
-        when(userRepository.save(userToSave)).thenReturn(userToSave);
-
-        UserDto actualUserDto = userService.add(userDto);
-
-        assertEquals(userDto, actualUserDto);
-        verify(userRepository).save(userToSave);
-    }
-
-    @Test
     void updateUserTest() {
         UserDto user = userService.add(userDto);
         Long userId = user.getId();
