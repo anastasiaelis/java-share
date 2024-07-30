@@ -1,5 +1,6 @@
 package ru.practicum.shareit.booking;
 
+import lombok.Builder;
 import lombok.experimental.UtilityClass;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingDtoOut;
@@ -22,15 +23,18 @@ public class BookingMapper {
                 BookingStatus.WAITING);
     }
 
+    @Builder
     public BookingDtoOut toBookingOut(Booking booking) {
         return new BookingDtoOut(
-                booking.getId(),
-                ItemMapper.toItemDtoOut(booking.getItem()),
-                booking.getStart(),
-                booking.getEnd(),
-                UserMapper.toUserDto(booking.getBooker()),
-                booking.getStatus());
+//                booking.getId(),
+//                ItemMapper.toItemDtoOut(booking.getItem()),
+//                booking.getStart(),
+//                booking.getEnd(),
+//                UserMapper.toUserDto(booking.getBooker()),
+//                booking.getStatus()
+              );
     }
+
 
     public static BookingItemDto toBookingItemDto(Booking booking) {
         return new BookingItemDto(
