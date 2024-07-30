@@ -21,7 +21,7 @@ import java.util.List;
 @AllArgsConstructor
 public class ItemController {
     public static final String USER_HEADER = "X-Sharer-User-Id";
-    private final ItemService itemService;
+    private  final ItemService itemService;
 
     @PostMapping
     public ItemDtoOut add(@RequestHeader(USER_HEADER) Long userId,
