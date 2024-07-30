@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.user.markers.Create;
 import ru.practicum.shareit.user.markers.Update;
 import ru.practicum.shareit.user.service.UserService;
+
+import javax.validation.Valid;
 import java.util.List;
 
 @Slf4j
@@ -17,7 +19,7 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping
-   public UserDto add(@Validated({Create.class}) @RequestBody UserDto userDto) {
+   public UserDto add(@Valid @RequestBody  UserDto userDto) {
             log.info("Запрос на добавление пользователя {}", userDto);
         return userService.add(userDto);
    }

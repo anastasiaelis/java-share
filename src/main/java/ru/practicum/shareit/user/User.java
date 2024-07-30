@@ -20,6 +20,6 @@ public class User {
     private Long id;
     @Column(name = "name", nullable = false)
     private String name;
-    @Column(unique = true, length = 1024, nullable = false)
+    @Column(unique = true)
     private String email;
 }
