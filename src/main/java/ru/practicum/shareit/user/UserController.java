@@ -19,10 +19,10 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping
-   public UserDto add(@Valid @RequestBody  UserDto userDto) {
-            log.info("Запрос на добавление пользователя {}", userDto);
+    public UserDto add(@Valid @RequestBody UserDto userDto) {
+        log.info("Запрос на добавление пользователя {}", userDto);
         return userService.add(userDto);
-   }
+    }
 
     @GetMapping("/{userId}")
     public UserDto findById(@PathVariable Long userId) {

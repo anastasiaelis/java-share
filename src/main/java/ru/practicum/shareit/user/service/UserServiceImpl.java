@@ -78,8 +78,8 @@ public class UserServiceImpl implements UserService {
     }
 
     private boolean userWithEmailExists(String email) {
-       boolean aca=userRepository.findAll().stream().map(User::getEmail).anyMatch(email::equals);
-        List<User> fin=userRepository.findAll();
+        boolean aca = userRepository.findAll().stream().map(User::getEmail).anyMatch(email::equals);
+        List<User> fin = userRepository.findAll();
         return aca;
     }
 
