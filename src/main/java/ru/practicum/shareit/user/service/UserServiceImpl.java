@@ -46,7 +46,7 @@ public class UserServiceImpl implements UserService {
         String email = userDto.getEmail();
         if (email != null && !email.isBlank()) {
             if (!Objects.equals(email, user.getEmail()) && userWithEmailExists(email)) {
-                throw new NotUniqueEmailException("Failed to update user. User with email " + userDto.getEmail() + " already exists.");
+                throw new NotUniqueEmailException("Не уникальный Email.");
             }
 
             user.setEmail(email);
@@ -78,7 +78,9 @@ public class UserServiceImpl implements UserService {
     }
 
     private boolean userWithEmailExists(String email) {
-        return userRepository.findAll().stream().map(User::getEmail).anyMatch(email::equals);
+       boolean aca=userRepository.findAll().stream().map(User::getEmail).anyMatch(email::equals);
+        List<User> fin=userRepository.findAll();
+        return aca;
     }
 
 }
