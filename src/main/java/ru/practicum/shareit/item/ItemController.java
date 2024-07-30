@@ -2,7 +2,6 @@ package ru.practicum.shareit.item;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.item.dto.CommentDto;
@@ -22,7 +21,6 @@ import java.util.List;
 @AllArgsConstructor
 public class ItemController {
     public static final String USER_HEADER = "X-Sharer-User-Id";
-  //  @Autowired
     private final ItemService itemService;
 
     @PostMapping
