@@ -12,6 +12,7 @@ import ru.practicum.shareit.user.repository.UserRepository;
 import ru.practicum.shareit.exceptions.NotUniqueEmailException;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -25,7 +26,6 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public UserDto add(UserDto userDto) {
         User user = UserMapper.toUser(userDto);
-        userRepository.save(user);
         try {
             return UserMapper.toUserDto(user);
         } catch (DataIntegrityViolationException e) {
@@ -45,6 +45,10 @@ public class UserServiceImpl implements UserService {
         }
         String email = userDto.getEmail();
         if (email != null && !email.isBlank()) {
+            if (!Objects.equals(email, user.getEmail()) && userWithEmailExists(email)) {
+                throw new NotUniqueEmailException("Failed to update user. User with email " + userDto.getEmail() + " already exists.");
+            }
+
             user.setEmail(email);
         }
         return UserMapper.toUserDto(user);
@@ -72,4 +76,9 @@ public class UserServiceImpl implements UserService {
                 .map(UserMapper::toUserDto)
                 .collect(Collectors.toList());
     }
+
+    private boolean userWithEmailExists(String email) {
+        return userRepository.findAll().stream().map(User::getEmail).anyMatch(email::equals);
+    }
+
 }
