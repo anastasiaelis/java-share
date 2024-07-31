@@ -14,7 +14,7 @@ import ru.practicum.shareit.request.repository.ItemRequestRepository;
 import ru.practicum.shareit.request.service.ItemRequestServiceImpl;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.UserDto;
-import ru.practicum.shareit.user.UserService;
+import ru.practicum.shareit.user.service.UserService;
 
 import java.util.List;
 import java.util.Optional;

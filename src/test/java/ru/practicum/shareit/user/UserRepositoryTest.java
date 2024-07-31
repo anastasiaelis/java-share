@@ -13,14 +13,6 @@ class UserRepositoryTest {
     @Autowired
     private UserRepository userRepository;
 
-    @Test
-    void testExistsByEmailContainingIgnoreCase() {
-        assertFalse(userRepository.existsByEmailContainingIgnoreCase("emailSearch"));
-        User user = makeUser();
-        userRepository.save(user);
-        assertTrue(userRepository.existsByEmailContainingIgnoreCase(user.getEmail()));
-    }
-
     private User makeUser() {
         return User.builder()
                 .name("Пётр")

@@ -2,36 +2,26 @@ package ru.practicum.shareit.user;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.shareit.exceptions.ColoredCRUDLogger;
 import ru.practicum.shareit.user.markers.Create;
 import ru.practicum.shareit.user.markers.Update;
+import ru.practicum.shareit.user.service.UserService;
 
 import java.util.List;
 
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(path = "/users")
-@Slf4j
-
+@RequestMapping("/users")
 public class UserController {
     private final UserService userService;
 
     @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
     public UserDto add(@Validated({Create.class}) @RequestBody UserDto userDto) {
-        UserDto zss = userDto;
-        //log.info("Запрос на добавление пользователя {}", userDto);
-        //return userService.add(userDto);
-
-        ColoredCRUDLogger.logPost("/users", userDto.toString());
-        var result = userService.add(userDto);
-        ColoredCRUDLogger.logPostComplete("/users", result.toString());
+        log.info("Запрос на добавление пользователя {}", userDto);
         return userService.add(userDto);
-
     }
 
     @GetMapping("/{userId}")
