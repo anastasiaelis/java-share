@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @UtilityClass
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
+//@NoArgsConstructor(access = AccessLevel.PRIVATE)
 
 public class UserMapper {
 
