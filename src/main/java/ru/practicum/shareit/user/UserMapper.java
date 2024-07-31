@@ -2,13 +2,13 @@ package ru.practicum.shareit.user;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-import lombok.experimental.UtilityClass;
+//import lombok.experimental.UtilityClass;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@UtilityClass
-//@NoArgsConstructor(access = AccessLevel.PRIVATE)
+//@UtilityClass
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 
 public class UserMapper {
 
