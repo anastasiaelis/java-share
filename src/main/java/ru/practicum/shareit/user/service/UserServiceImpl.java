@@ -7,6 +7,7 @@ import ru.practicum.shareit.exceptions.NotFoundException;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.UserDto;
 import ru.practicum.shareit.user.UserMapper;
+import ru.practicum.shareit.user.UserService;
 import ru.practicum.shareit.user.repository.UserRepository;
 
 import java.util.List;
@@ -18,9 +19,12 @@ import java.util.stream.Collectors;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
-
-    @Override
+    private User userExistCheck(Long userId) {
+        return userRepository.findById(userId).orElseThrow(() ->
+                new ru.practicum.shareit.exception.UserNotFoundException("Пользователь не найден"));
+    }
     @Transactional
+    @Override
     public UserDto add(UserDto userDto) {
         User user = UserMapper.toUser(userDto);
         userRepository.save(user);

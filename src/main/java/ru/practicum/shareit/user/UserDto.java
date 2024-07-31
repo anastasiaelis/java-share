@@ -20,8 +20,8 @@ public class UserDto {
     private Long id;
     @NotBlank(groups = {Create.class})
     private String name;
-    @UniqueElements
     @Email(groups = {Create.class, Update.class})
     @NotBlank(groups = {Create.class})
+    @UniqueElements
     private String email;
 }

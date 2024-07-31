@@ -37,15 +37,14 @@ public class ErrorHandler {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorResponse handleOtherException(final Throwable e) {
         log.warn("Получен статус 500 SERVER_ERROR {}", e.getMessage(), e);
-        return new ErrorResponse(
-                e.getMessage()
+        return new ErrorResponse(e.getMessage()
         );
     }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.CONFLICT)
     public ErrorResponse handleUserEmailConflictException(final UserEmailConflictException e) {
-        log.error("User email conflict");
+        log.error("Получен статус 409 CONFLICT {}",e.getMessage(),e);
         return new ErrorResponse(e.getMessage());
     }
 }
