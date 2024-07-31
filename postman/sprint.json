@@ -223,7 +223,7 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"pm.test(\"Status code is 409\", function () {\r",
+									"pm.test(\"Status code is 500\", function () {\r",
 									"    pm.response.to.have.status(500);\r",
 									"});\r",
 									"pm.test(\"Response have body\", function () {\r",
@@ -693,7 +693,7 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"pm.test(\"Status code is 409\", function () {\r",
+									"pm.test(\"Status code is 500\", function () {\r",
 									"    pm.response.to.have.status(500);\r",
 									"});\r",
 									"pm.test(\"Response have body\", function () {\r",
