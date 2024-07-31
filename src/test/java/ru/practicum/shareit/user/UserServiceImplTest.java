@@ -6,7 +6,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ru.practicum.shareit.exceptions.NotFoundException;
-import ru.practicum.shareit.exceptions.NotUniqueEmailException;
 import ru.practicum.shareit.user.repository.UserRepository;
 import ru.practicum.shareit.user.service.UserServiceImpl;
 
@@ -32,6 +31,17 @@ class UserServiceImplTest {
             .name("name")
             .email("my@email.com")
             .build();
+
+    @Test
+    void addNewUserReturnUserDto() {
+        User userToSave = User.builder().id(1L).name("name").email("my@email.com").build();
+        when(userRepository.save(userToSave)).thenReturn(userToSave);
+
+        UserDto actualUserDto = userService.add(userDto);
+
+        assertEquals(userDto, actualUserDto);
+        verify(userRepository).save(userToSave);
+    }
 
     @Test
     void updateUserTest() {
@@ -93,19 +103,4 @@ class UserServiceImplTest {
         userService.delete(userId);
         verify(userRepository, times(1)).deleteById(userId);
     }
-
-    @Test
-    void update_shouldThrowUserEmailAlreadyExistsException() {
-        User user1 = new User(1L, "Jo", "jokj@ya.ru");
-        User user2 = new User(2L, "Sam", "nmnm@ya.ru");
-        UserDto userDtoToUpdateTo = UserMapper.toUserDto(user2);
-        Long userId = user1.getId();
-        when(userRepository.findById(userId))
-                .thenReturn(Optional.of(user1));
-
-        when(userRepository.findAll())
-                .thenReturn(List.of(user1, user2));
-        assertThrows(NotUniqueEmailException.class, () -> userService.update(userId, userDtoToUpdateTo));
-    }
-
 }

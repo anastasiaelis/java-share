@@ -15,6 +15,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -30,6 +31,63 @@ class UserControllerTest {
 
     @MockBean
     private UserService userService;
+
+    @Test
+    @SneakyThrows
+    void createUserWhenUserIsValid() {
+        UserDto userDtoToCreate = UserDto.builder()
+                .email("email@email.com")
+                .name("name")
+                .build();
+
+        when(userService.add(userDtoToCreate)).thenReturn(userDtoToCreate);
+
+        String result = mockMvc.perform(post("/users")
+                        .contentType("application/json")
+                        .content(objectMapper.writeValueAsString(userDtoToCreate)))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        assertEquals(objectMapper.writeValueAsString(userDtoToCreate), result);
+    }
+
+    @Test
+    @SneakyThrows
+    void createUserWheUserEmailIsNotValidShouldReturnBadRequest() {
+        UserDto userDtoToCreate = UserDto.builder()
+                .email("email.com")
+                .name("name")
+                .build();
+
+        when(userService.add(userDtoToCreate)).thenReturn(userDtoToCreate);
+
+        mockMvc.perform(post("/users")
+                        .contentType("application/json")
+                        .content(objectMapper.writeValueAsString(userDtoToCreate)))
+                .andExpect(status().isBadRequest());
+
+        verify(userService, never()).add(userDtoToCreate);
+    }
+
+    @Test
+    @SneakyThrows
+    void createUserWheNameIsNotValidShouldReturnBadRequest() {
+        UserDto userDtoToCreate = UserDto.builder()
+                .email("email@email.com")
+                .name("     ")
+                .build();
+
+        when(userService.add(userDtoToCreate)).thenReturn(userDtoToCreate);
+
+        mockMvc.perform(post("/users")
+                        .contentType("application/json")
+                        .content(objectMapper.writeValueAsString(userDtoToCreate)))
+                .andExpect(status().isBadRequest());
+
+        verify(userService, never()).add(userDtoToCreate);
+    }
 
     @Test
     @SneakyThrows
@@ -51,6 +109,25 @@ class UserControllerTest {
                 .getContentAsString();
 
         assertEquals(objectMapper.writeValueAsString(userDtoToUpdate), result);
+    }
+
+    @Test
+    @SneakyThrows
+    void updateUserWheUserEmailIsNotValidShouldReturnBadRequest() {
+        Long userId = 0L;
+        UserDto userDtoToUpdate = UserDto.builder()
+                .email("update.com")
+                .name("update")
+                .build();
+
+        when(userService.update(userId, userDtoToUpdate)).thenReturn(userDtoToUpdate);
+
+        mockMvc.perform(post("/users")
+                        .contentType("application/json")
+                        .content(objectMapper.writeValueAsString(userDtoToUpdate)))
+                .andExpect(status().isBadRequest());
+
+        verify(userService, never()).add(userDtoToUpdate);
     }
 
     @Test

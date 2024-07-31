@@ -94,10 +94,10 @@ public class ItemServiceImpl implements ItemService {
     public ItemDtoOut findItemById(Long userId, Long itemId) {
         userService.findById(userId);
         Optional<Item> itemGet = itemRepository.findById(itemId);
-      //  if (itemGet.isEmpty()) {
-        //    throw new NotFoundException("У пользователя с id = " + userId + " не " +
-          //          "существует вещи с id = " + itemId);
-       // }
+        if (itemGet.isEmpty()) {
+            throw new NotFoundException("У пользователя с id = " + userId + " не " +
+                    "существует вещи с id = " + itemId);
+        }
         Item item = itemGet.get();
         ItemDtoOut itemDtoOut = ItemMapper.toItemDtoOut(itemGet.get());
         itemDtoOut.setComments(getAllItemComments(itemId));

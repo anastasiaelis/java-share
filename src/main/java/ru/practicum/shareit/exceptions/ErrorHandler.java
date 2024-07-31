@@ -41,13 +41,4 @@ public class ErrorHandler {
                 e.getMessage()
         );
     }
-
-    @ExceptionHandler({NotUniqueEmailException.class})
-    @ResponseStatus(HttpStatus.CONFLICT)
-    public ErrorResponse handlerNotUniqueEmailException(final RuntimeException e) {
-        log.warn("Не уникальный Email.");
-        return new ErrorResponse(
-                e.getMessage()
-        );
-    }
 }
