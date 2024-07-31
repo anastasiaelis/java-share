@@ -6,7 +6,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-
+import  ru.practicum.shareit.exception.UserEmailConflictException;
 import javax.validation.ConstraintViolationException;
 
 @Slf4j
@@ -40,5 +40,12 @@ public class ErrorHandler {
         return new ErrorResponse(
                 e.getMessage()
         );
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ErrorResponse handleUserEmailConflictException(final UserEmailConflictException e) {
+        log.error("User email conflict");
+        return new ErrorResponse(e.getMessage());
     }
 }

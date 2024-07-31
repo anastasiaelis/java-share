@@ -223,8 +223,8 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"pm.test(\"Status code is 500\", function () {\r",
-									"    pm.response.to.have.status(500);\r",
+									"pm.test(\"Status code is 409\", function () {\r",
+									"    pm.response.to.have.status(409);\r",
 									"});\r",
 									"pm.test(\"Response have body\", function () {\r",
 									"    pm.response.to.be.withBody;\r",
@@ -574,7 +574,6 @@
 									"const interval = setInterval(() => {}, 1000);\r",
 									"\r",
 									"setTimeout(async () => \r",
-									"setTimeout(async () => \r",
 									"    {\r",
 									"        try {\r",
 									"            await main();\r",
@@ -645,13 +644,57 @@
 					},
 					"response": []
 				},
-				
+				{
+					"name": "User update with existing email",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const main = async () => {\r",
+									"    const api = new API(pm);\r",
+									"    const rnd = new RandomUtils();\r",
+									"\r",
+									"    try {\r",
+									"        user = rnd.getUser();\r",
+									"        us = await api.addUser(user);\r",
+									"        user2 = rnd.getUser();\r",
+									"        us2 = await api.addUser(user2)\r",
+									"        pm.collectionVariables.set(\"userId\", us2.id);\r",
+									"        usa = rnd.getUser()\r",
+									"        pm.collectionVariables.set(\"userName\", usa.name);\r",
+									"        pm.collectionVariables.set(\"userEmail\", user.email);\r",
+									"    } catch(err) {\r",
+									"        console.error(\"Ошибка при подготовке тестовых данных.\", err);\r",
+									"    }\r",
+									"\r",
+									"};\r",
+									"\r",
+									"const interval = setInterval(() => {}, 1000);\r",
+									"\r",
+									"setTimeout(async () => \r",
+									"    {\r",
+									"        try {\r",
+									"            await main();\r",
+									"        } catch (e) {\r",
+									"            console.error(e);\r",
+									"        } finally {\r",
+									"            clearInterval(interval);\r",
+									"        }\r",
+									"    },  \r",
+									"    100 \r",
+									");"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
 						{
 							"listen": "test",
 							"script": {
 								"exec": [
-									"pm.test(\"Status code is 500\", function () {\r",
-									"    pm.response.to.have.status(500);\r",
+									"pm.test(\"Status code is 409\", function () {\r",
+									"    pm.response.to.have.status(409);\r",
 									"});\r",
 									"pm.test(\"Response have body\", function () {\r",
 									"    pm.response.to.be.withBody;\r",
