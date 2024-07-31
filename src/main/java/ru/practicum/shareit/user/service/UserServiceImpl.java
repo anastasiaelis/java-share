@@ -19,10 +19,12 @@ import java.util.stream.Collectors;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
+
     private User userExistCheck(Long userId) {
         return userRepository.findById(userId).orElseThrow(() ->
                 new ru.practicum.shareit.exception.UserNotFoundException("Пользователь не найден"));
     }
+
     @Transactional
     @Override
     public UserDto add(UserDto userDto) {

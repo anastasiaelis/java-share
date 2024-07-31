@@ -23,13 +23,13 @@ public class UserController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public UserDto add(@Validated({Create.class}) @RequestBody UserDto userDto) {
-        UserDto zss=userDto;
+        UserDto zss = userDto;
         //log.info("Запрос на добавление пользователя {}", userDto);
         //return userService.add(userDto);
 
         ColoredCRUDLogger.logPost("/users", userDto.toString());
-      var result= userService.add(userDto);
-       ColoredCRUDLogger.logPostComplete("/users", result.toString());
+        var result = userService.add(userDto);
+        ColoredCRUDLogger.logPostComplete("/users", result.toString());
         return userService.add(userDto);
 
     }

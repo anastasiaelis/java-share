@@ -7,7 +7,7 @@ import lombok.experimental.UtilityClass;
 import java.util.ArrayList;
 import java.util.List;
 
-//@UtilityClass
+@UtilityClass
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 
 public class UserMapper {
@@ -19,6 +19,7 @@ public class UserMapper {
                 .email(user.getEmail())
                 .build();
     }
+
     public static List<UserDto> toUserDto(Iterable<User> users) {
         List<UserDto> result = new ArrayList<>();
         for (User user : users) {
@@ -26,8 +27,9 @@ public class UserMapper {
         }
         return result;
     }
+
     public static User toUser(UserDto userDto) {
-        return  User.builder()
+        return User.builder()
                 .id(userDto.getId())
                 .name(userDto.getName())
                 .email(userDto.getEmail())
