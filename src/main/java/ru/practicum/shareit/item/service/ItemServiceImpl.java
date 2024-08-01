@@ -18,7 +18,7 @@ import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemDtoOut;
 import ru.practicum.shareit.item.mapper.CommentMapper;
 import ru.practicum.shareit.item.mapper.ItemMapper;
-import ru.practicum.shareit.item.model.Comment;
+import ru.practicum.shareit.item.model.ItemComment;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.CommentRepository;
 import ru.practicum.shareit.item.repository.ItemRepository;
@@ -188,7 +188,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     public List<CommentDtoOut> getAllItemComments(Long itemId) {
-        List<Comment> comments = commentRepository.findAllByItemId(itemId);
+        List<ItemComment> comments = commentRepository.findAllByItemId(itemId);
 
         return comments.stream()
                 .map(CommentMapper::toCommentDtoOut)

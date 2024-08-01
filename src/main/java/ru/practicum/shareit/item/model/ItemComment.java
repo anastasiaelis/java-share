@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 @Builder
 @Entity
 @Table(name = "comments", schema = "public")
-public class Comment {
+public class ItemComment {
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -37,7 +37,7 @@ public class Comment {
     @CreationTimestamp
     private LocalDateTime created;
 
-    public Comment(String text, Item item, User author) {
+    public ItemComment(String text, Item item, User author) {
         this.text = text;
         this.item = item;
         this.author = author;

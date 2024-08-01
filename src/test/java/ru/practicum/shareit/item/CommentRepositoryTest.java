@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.test.annotation.DirtiesContext;
-import ru.practicum.shareit.item.model.Comment;
+import ru.practicum.shareit.item.model.ItemComment;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.CommentRepository;
 import ru.practicum.shareit.user.User;
@@ -38,7 +38,7 @@ class CommentRepositoryTest {
             .owner(user)
             .build();
 
-    private final Comment comment = Comment.builder()
+    private final ItemComment comment = ItemComment.builder()
             .item(item)
             .author(user)
             .created(LocalDateTime.now())
@@ -47,7 +47,7 @@ class CommentRepositoryTest {
 
 
     @BeforeEach
-    private void init() {
+    public void init() {
         testEntityManager.persist(user);
         testEntityManager.persist(item);
         testEntityManager.flush();
@@ -55,13 +55,13 @@ class CommentRepositoryTest {
     }
 
     @AfterEach
-    private void deleteAll() {
+    public void deleteAll() {
         commentRepository.deleteAll();
     }
 
     @Test
     void findAllByItemId() {
-        List<Comment> comments = commentRepository.findAllByItemId(1L);
+        List<ItemComment> comments = commentRepository.findAllByItemId(1L);
 
         assertEquals(comments.size(), 1);
         assertEquals(comments.get(0).getText(), "comment");
