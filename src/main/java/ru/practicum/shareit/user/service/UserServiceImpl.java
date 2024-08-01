@@ -35,10 +35,10 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public UserDto update(Long id, UserDto userDto) {
+    public UserDto update(UserDto userDto) {
         User userExist = UserMapper.toUser(userDto);
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Пользователя с " + id + " не существует")
+        User user = userRepository.findById(userDto.getId())
+                .orElseThrow(() -> new NotFoundException("Пользователя с " + userDto.getId() + " не существует")
                 );
 
         String name = userDto.getName();
@@ -48,11 +48,10 @@ public class UserServiceImpl implements UserService {
         String email = userDto.getEmail();
         if (email != null && !email.isBlank()) {
             user.setEmail(email);
-            if (user.getEmail().equals(userExist.getEmail())) {
+            if (userRepository.existsByEmail(user.getEmail()) && !user.getEmail().equals(userExist.getEmail())) {
                 throw new AlreadyExistException("Пользователь с email " + user.getEmail() + "уже существует!");
             }
         }
-        //userRepository.existsByEmail(user.getEmail()) && !
         return UserMapper.toUserDto(user);
     }
 
