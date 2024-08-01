@@ -8,6 +8,8 @@ import ru.practicum.shareit.user.markers.Create;
 import ru.practicum.shareit.user.markers.Update;
 import ru.practicum.shareit.user.service.UserService;
 
+import javax.validation.Valid;
+import javax.validation.constraints.Positive;
 import java.util.List;
 
 
@@ -37,8 +39,10 @@ public class UserController {
     }
 
     @PatchMapping("/{userId}")
-    public UserDto update(@Validated({Update.class}) @RequestBody UserDto userDto) {
+    public UserDto update(@Valid @RequestBody UserDto userDto,
+                          @Positive @PathVariable Long userId) {
         log.info("Запрос на обновление пользователя id = {}", userDto.getId());
+        userDto.setId(userId);
         return userService.update(userDto);
     }
 
