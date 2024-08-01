@@ -1,14 +1,13 @@
 package ru.practicum.shareit.user;
 
-import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.exceptions.NotFoundException;
+import ru.practicum.shareit.user.repository.UserRepository;
+import ru.practicum.shareit.user.service.UserServiceImpl;
 
 import java.util.List;
 import java.util.Optional;
@@ -17,9 +16,6 @@ import java.util.stream.Collectors;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-@Service
-@RequiredArgsConstructor
-@Transactional(readOnly = true)
 @ExtendWith(MockitoExtension.class)
 class UserServiceImplTest {
 
@@ -46,6 +42,26 @@ class UserServiceImplTest {
         assertEquals(userDto, actualUserDto);
         verify(userRepository).save(userToSave);
     }
+
+//    @Test
+//    void updateUserTest() {
+//        User user = User.builder().id(1L).name("name").email("my@email.com").build();
+//        Long userId = user.getId();
+//        userRepository.save(user);
+//        UserDto fieldsToUpdate = new UserDto();
+//        fieldsToUpdate.setId(1L);
+//        fieldsToUpdate.setEmail("updated@example.com");
+//        fieldsToUpdate.setName("Updated User");
+//      User usere= userRepository.getUserById(userId);
+//      //  when(userRepository.getUserById(userId)).thenReturn(user);
+//      //  when(userRepository.save(user)).thenReturn(user);
+//
+//        UserDto updatedUserDto = userService.update(fieldsToUpdate);
+//        assertNotNull(updatedUserDto);
+//      assertEquals("Updated User", updatedUserDto.getName());
+//       assertEquals("updated@example.com", updatedUserDto.getEmail());
+//    }
+
 
     @Test
     void findUserByIdWhenUserFound() {
