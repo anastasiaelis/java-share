@@ -173,6 +173,9 @@ public class ItemServiceImpl implements ItemService {
             throw new NotFoundException("У пользователя с id = " + userId + " не " +
                     "существует вещи с id = " + itemId);
         }
+
+
+
         Item item = itemById.get();
 
         List<Booking> userBookings = bookingRepository.findAllByUserBookings(userId, itemId, LocalDateTime.now());
