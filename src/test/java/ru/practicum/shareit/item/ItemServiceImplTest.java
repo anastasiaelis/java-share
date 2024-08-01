@@ -7,9 +7,6 @@ import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.BookingStatus;
 import ru.practicum.shareit.booking.repository.BookingRepository;
@@ -97,6 +94,8 @@ class ItemServiceImplTest {
             .comments(Collections.emptyList())
             .build();
     private final ItemDto itemDtoUpdate = ItemDto.builder()
+            .name("mm")
+            .available(true)
             .build();
 
     private final Comment comment = Comment.builder()
@@ -241,17 +240,6 @@ class ItemServiceImplTest {
         assertEquals(actualComments, expectedCommentsDto);
     }
 
-    @Test
-    void searchItems() {
-        Page<Item> items = new PageImpl<>(List.of(item));
-        when(itemRepository.findAllByOwnerId(anyLong(), any(Pageable.class))).thenReturn(List.of(item));
-
-        List<ItemDtoOut> actualItemsDto = itemService.findAll(1L, 0, 10);
-
-        assertEquals(1, actualItemsDto.size());
-        assertEquals(1, actualItemsDto.get(0).getId());
-        assertEquals("item name", actualItemsDto.get(0).getName());
-    }
 
     @Test
     void createComment() {

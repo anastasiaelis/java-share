@@ -3,6 +3,7 @@ package ru.practicum.shareit.user.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.practicum.shareit.exceptions.AlreadyExistException;
 import ru.practicum.shareit.exceptions.NotFoundException;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.UserDto;
@@ -23,8 +24,13 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public UserDto add(UserDto userDto) {
         User user = UserMapper.toUser(userDto);
-        userRepository.save(user);
+        try {
+            user = userRepository.save(user);
+        } catch (Exception e) {
+            throw new AlreadyExistException("Пользователь с email " + user.getEmail() + "!");
+        }
         return UserMapper.toUserDto(user);
+
     }
 
     @Override
