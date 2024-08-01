@@ -37,7 +37,7 @@ public class UserController {
     }
 
     @PatchMapping("/{userId}")
-    public UserDto update( @Validated({Update.class}) @RequestBody UserDto userDto) {
+    public UserDto update(@Validated({Update.class}) @RequestBody UserDto userDto) {
         log.info("Запрос на обновление пользователя id = {}", userDto.getId());
         return userService.update(userDto);
     }

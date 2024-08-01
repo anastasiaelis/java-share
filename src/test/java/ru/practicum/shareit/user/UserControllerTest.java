@@ -99,8 +99,8 @@ class UserControllerTest {
                 .build();
 
         when(userService.update(userDtoToUpdate)).thenReturn(userDtoToUpdate);
-        Long userId= userDtoToUpdate.getId();
-        String result = mockMvc.perform(patch("/users/{userId}",userId)
+        Long userId = userDtoToUpdate.getId();
+        String result = mockMvc.perform(patch("/users/{userId}", userId)
                         .contentType("application/json")
                         .content(objectMapper.writeValueAsString(userDtoToUpdate)))
                 .andExpect(status().isOk())
