@@ -43,20 +43,21 @@ class UserServiceImplTest {
         verify(userRepository).save(userToSave);
     }
 
-//    @Test
-//    void updateUserTest() {
-//        UserDto user = userService.add(userDto);
-//        Long userId = user.getId();
-//
-//        UserDto fieldsToUpdate = new UserDto();
-//        fieldsToUpdate.setEmail("updated@example.com");
-//        fieldsToUpdate.setName("Updated User");
-//        when(userRepository.findById(userId)).thenReturn(Optional.of(UserMapper.toUser(user)));
-//        UserDto updatedUserDto = userService.update(userId, fieldsToUpdate);
-//        assertNotNull(updatedUserDto);
-//        assertEquals("Updated User", updatedUserDto.getName());
-//        assertEquals("updated@example.com", updatedUserDto.getEmail());
-//    }
+    @Test
+    void updateUserTest() {
+
+        User user = User.builder().id(1L).name("name").email("my@email.com").build();
+        Long userId = user.getId();
+        UserDto fieldsToUpdate = new UserDto();
+        fieldsToUpdate.setId(1L);
+        fieldsToUpdate.setEmail("updated@example.com");
+        fieldsToUpdate.setName("Updated User");
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+        UserDto updatedUserDto = userService.update(fieldsToUpdate);
+        assertNotNull(updatedUserDto);
+        assertEquals("Updated User", updatedUserDto.getName());
+        assertEquals("updated@example.com", updatedUserDto.getEmail());
+    }
 
 
     @Test
