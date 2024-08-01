@@ -20,7 +20,7 @@ import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemDtoOut;
 import ru.practicum.shareit.item.mapper.CommentMapper;
 import ru.practicum.shareit.item.mapper.ItemMapper;
-import ru.practicum.shareit.item.model.ItemComment;
+import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.CommentRepository;
 import ru.practicum.shareit.item.repository.ItemRepository;
@@ -99,7 +99,7 @@ class ItemServiceImplTest {
     private final ItemDto itemDtoUpdate = ItemDto.builder()
             .build();
 
-    private final ItemComment comment = ItemComment.builder()
+    private final Comment comment = Comment.builder()
             .id(1L)
             .text("comment")
             .created(LocalDateTime.now())
@@ -260,7 +260,7 @@ class ItemServiceImplTest {
         when(itemRepository.findById(item.getId())).thenReturn(Optional.of(item));
         when(bookingRepository.findAllByUserBookings(anyLong(), anyLong(), any(LocalDateTime.class)))
                 .thenReturn(List.of(booking));
-        when(commentRepository.save(any(ItemComment.class))).thenReturn(comment);
+        when(commentRepository.save(any(Comment.class))).thenReturn(comment);
 
         CommentDtoOut actualCommentDto = itemService.createComment(user.getId(), CommentMapper.toCommentDto(comment), item.getId());
 

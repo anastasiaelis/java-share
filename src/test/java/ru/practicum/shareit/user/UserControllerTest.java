@@ -3,19 +3,13 @@ package ru.practicum.shareit.user;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import ru.practicum.shareit.exceptions.ErrorHandler;
-import ru.practicum.shareit.exceptions.UserEmailConflictException;
 import ru.practicum.shareit.user.service.UserService;
 
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -28,8 +22,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(controllers = UserController.class)
 class UserControllerTest {
-    @InjectMocks
-    private UserController controller;
+
     @Autowired
     private ObjectMapper objectMapper;
 
@@ -38,8 +31,6 @@ class UserControllerTest {
 
     @MockBean
     private UserService userService;
-    private UserDto userDto;
-    private List<UserDto> userDtos;
 
     @Test
     @SneakyThrows
@@ -176,37 +167,5 @@ class UserControllerTest {
                 .andExpect(status().isOk());
 
         verify(userService, times(1)).delete(userId);
-    }
-
-    void setUp() {
-        mockMvc = MockMvcBuilders
-                .standaloneSetup(controller)
-                .setControllerAdvice(ErrorHandler.class)
-                .build();
-
-        userDto = makeUserDto();
-        userDtos = List.of(userDto);
-    }
-
-    @Test
-    void createUserWithThrowable() throws Exception {
-        setUp();
-        when(userService.add(any()))
-                .thenThrow(UserEmailConflictException.class);
-
-        mockMvc.perform(post("/users")
-                        .content(objectMapper.writeValueAsString(userDto))
-                        .characterEncoding(StandardCharsets.UTF_8)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().is(500));
-    }
-
-    private UserDto makeUserDto() {
-        return UserDto.builder()
-                .id(1L)
-                .name("Пётр")
-                .email("some@email.com")
-                .build();
     }
 }

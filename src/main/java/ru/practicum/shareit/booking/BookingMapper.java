@@ -22,17 +22,15 @@ public class BookingMapper {
                 BookingStatus.WAITING);
     }
 
-     public BookingDtoOut toBookingOut(Booking booking) {
+    public BookingDtoOut toBookingOut(Booking booking) {
         return new BookingDtoOut(
                 booking.getId(),
                 ItemMapper.toItemDtoOut(booking.getItem()),
                 booking.getStart(),
                 booking.getEnd(),
                 UserMapper.toUserDto(booking.getBooker()),
-                booking.getStatus()
-        );
+                booking.getStatus());
     }
-
 
     public static BookingItemDto toBookingItemDto(Booking booking) {
         return new BookingItemDto(

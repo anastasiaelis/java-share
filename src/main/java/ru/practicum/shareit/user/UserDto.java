@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.validator.constraints.UniqueElements;
 import ru.practicum.shareit.user.markers.Create;
 import ru.practicum.shareit.user.markers.Update;
 
@@ -20,7 +19,6 @@ public class UserDto {
     private Long id;
     @NotBlank(groups = {Create.class})
     private String name;
-    @UniqueElements
     @Email(groups = {Create.class, Update.class})
     @NotBlank(groups = {Create.class})
     private String email;

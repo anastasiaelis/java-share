@@ -16,6 +16,7 @@ import ru.practicum.shareit.user.UserMapper;
 import ru.practicum.shareit.user.service.UserService;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 
@@ -57,10 +58,12 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     @Override
     public ItemRequestDtoOut getRequestById(Long userId, Long requestId) {
         userService.findById(userId);
-        ItemRequest requestById = requestRepository.findById(requestId)
-                .orElseThrow(() -> new NotFoundException("Запрос не был найден."));
-
-        return ItemRequestMapper.toRequestDtoOut(requestById);
+        Optional<ItemRequest> requestById = requestRepository.findById(requestId);
+        if (requestById.isEmpty()) {
+            throw new NotFoundException(String.format("Запрос с id: %s " +
+                    "не был найден.", requestId));
+        }
+        return ItemRequestMapper.toRequestDtoOut(requestById.get());
     }
 }
 
