@@ -11,11 +11,14 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-@RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class UserServiceImpl implements UserService {
 
-    private final UserRepository userRepository;
+    final UserRepository userRepository;
+
+    public UserServiceImpl(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
     @Override
     @Transactional
@@ -33,21 +36,38 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public UserDto update(UserDto userDto) {
-        User currentUser = userRepository.getById(userDto.getId());
-           //     .orElseThrow(() -> new NotFoundException("Пользователя с " + userDto.getId() + " не существует")
-             //   );
-        if (userDto.getName() == null) {
-            userDto.setName(currentUser.getName());
+        //User currentUser = userRepository.getById(userDto.getId());
+        //     .orElseThrow(() -> new NotFoundException("Пользователя с " + userDto.getId() + " не существует")
+        //   );
+        //if (userDto.getName() == null) {
+        //  userDto.setName(currentUser.getName());
+        /// }
+        //if (userDto.getEmail() == null) {
+        //  userDto.setEmail(currentUser.getEmail());
+        //} else {
+        // if (userDto.getEmail().equals(currentUser.getEmail())) {
+        //       throw new AlreadyExistException("Ошибка обновления пользователя с email " + userDto.getEmail());
+        //     }
+        //   }
+
+        // return UserMapper.toUserDto(userRepository.save(UserMapper.toUser(userDto)));
+
+        final User u = userRepository.findById(userDto.getId())
+                .orElseThrow(() -> new RuntimeException("User not found " + userDto.getId()));
+        final User user = UserMapper.toUser(userDto);
+        if (user.getName() != null && !user.getName().isBlank()) {
+            u.setName(user.getName());
         }
-        if (userDto.getEmail() == null) {
-            userDto.setEmail(currentUser.getEmail());
+        if (user.getEmail() == null) {
+            u.setEmail(user.getEmail());
         } else {
-            if (userDto.getEmail().equals(currentUser.getEmail())) {
+            if (user.getEmail().equals(u.getEmail())) {
                 throw new AlreadyExistException("Ошибка обновления пользователя с email " + userDto.getEmail());
             }
-        }
 
-        return UserMapper.toUserDto(userRepository.save(UserMapper.toUser(userDto)));
+        }
+        userRepository.save(u);
+        return UserMapper.toUserDto(u);
     }
 
     @Override
