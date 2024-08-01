@@ -92,15 +92,15 @@ class UserControllerTest {
     @Test
     @SneakyThrows
     void updateUserWhenUserIsValid() {
-        Long userId = 0L;
         UserDto userDtoToUpdate = UserDto.builder()
+                .id(1L)
                 .email("update@update.com")
                 .name("update")
                 .build();
 
-        when(userService.update(userId, userDtoToUpdate)).thenReturn(userDtoToUpdate);
-
-        String result = mockMvc.perform(patch("/users/{userId}", userId)
+        when(userService.update(userDtoToUpdate)).thenReturn(userDtoToUpdate);
+        Long userId= userDtoToUpdate.getId();
+        String result = mockMvc.perform(patch("/users/{userId}",userId)
                         .contentType("application/json")
                         .content(objectMapper.writeValueAsString(userDtoToUpdate)))
                 .andExpect(status().isOk())
@@ -114,13 +114,12 @@ class UserControllerTest {
     @Test
     @SneakyThrows
     void updateUserWheUserEmailIsNotValidShouldReturnBadRequest() {
-        Long userId = 0L;
         UserDto userDtoToUpdate = UserDto.builder()
                 .email("update.com")
                 .name("update")
                 .build();
 
-        when(userService.update(userId, userDtoToUpdate)).thenReturn(userDtoToUpdate);
+        when(userService.update(userDtoToUpdate)).thenReturn(userDtoToUpdate);
 
         mockMvc.perform(post("/users")
                         .contentType("application/json")
