@@ -27,7 +27,7 @@ public class UserServiceImpl implements UserService {
         try {
             user = userRepository.save(user);
         } catch (Exception e) {
-            throw new AlreadyExistException("Пользователь с email " + user.getEmail() + "уже существует!");
+            throw new AlreadyExistException("Пользователь с email " + user.getEmail() + "!");
         }
         return UserMapper.toUserDto(user);
 
@@ -36,20 +36,18 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public UserDto update(Long id, UserDto userDto) {
-        User currentUser = userRepository.findById(userDto.getId())
-                .orElseThrow(() -> new NotFoundException("Пользователя с " + userDto.getId() + " не существует")
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Пользователя с " + id + " не существует")
                 );
-        if (userDto.getEmail() == null) {
-            userDto.setEmail(currentUser.getEmail());
-        } else {
-            if (userRepository.existsByEmail(userDto.getEmail()) && !userDto.getEmail().equals(currentUser.getEmail())) {
-                throw new AlreadyExistException("Ошибка обновления пользователя с email " + userDto.getEmail());
-            }
+        String name = userDto.getName();
+        if (name != null && !name.isBlank()) {
+            user.setName(name);
         }
-        if (userDto.getName() == null) {
-            userDto.setName(currentUser.getName());
+        String email = userDto.getEmail();
+        if (email != null && !email.isBlank()) {
+            user.setEmail(email);
         }
-        return userDto;
+        return UserMapper.toUserDto(user);
     }
 
     @Override
