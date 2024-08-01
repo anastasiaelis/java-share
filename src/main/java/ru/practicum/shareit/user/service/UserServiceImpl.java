@@ -52,6 +52,7 @@ public class UserServiceImpl implements UserService {
 //                throw new AlreadyExistException("Пользователь с email " + user.getEmail() + "уже существует!");
 //            }
         }
+        user = userRepository.save(user);
         return UserMapper.toUserDto(user);
     }
 

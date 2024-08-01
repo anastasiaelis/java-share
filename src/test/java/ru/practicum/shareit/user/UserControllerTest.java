@@ -97,18 +97,22 @@ class UserControllerTest {
                 .email("update@update.com")
                 .name("update")
                 .build();
-
-        when(userService.update(userDtoToUpdate)).thenReturn(userDtoToUpdate);
+        UserDto userDtoToUpdateNew = UserDto.builder()
+                .id(1L)
+                .email("cc@update.com")
+                .name("cc")
+                .build();
+        when(userService.update(userDtoToUpdateNew)).thenReturn(userDtoToUpdateNew);
         Long userId = userDtoToUpdate.getId();
         String result = mockMvc.perform(patch("/users/{userId}", userId)
                         .contentType("application/json")
-                        .content(objectMapper.writeValueAsString(userDtoToUpdate)))
+                        .content(objectMapper.writeValueAsString(userDtoToUpdateNew)))
                 .andExpect(status().isOk())
                 .andReturn()
                 .getResponse()
                 .getContentAsString();
 
-        assertEquals(objectMapper.writeValueAsString(userDtoToUpdate), result);
+        assertEquals(objectMapper.writeValueAsString(userDtoToUpdateNew), result);
     }
 
     @Test
