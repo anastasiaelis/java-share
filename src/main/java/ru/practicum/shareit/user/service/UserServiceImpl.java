@@ -76,7 +76,7 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public UserDto findById(Long id) {
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Пользователя с " + id + " не существует")
+                .orElseThrow(() -> new NotFoundException("Пользователя с id " + id + " не существует")
                 );
         return UserMapper.toUserDto(user);
     }
