@@ -41,17 +41,18 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Пользователя с " + id + " не существует")
                 );
-        try {
-            userExcist = userRepository.save(userExcist);
-        } catch (Exception e) {
-            throw new AlreadyExistException("Пользователь с email " + user.getEmail() + "!");
-        }
+
         String name = userDto.getName();
         if (name != null && !name.isBlank()) {
             user.setName(name);
         }
         String email = userDto.getEmail();
         if (email != null && !email.isBlank()) {
+            try {
+                userExcist = userRepository.save(userExcist);
+            } catch (Exception e) {
+                throw new AlreadyExistException("Пользователь с email " + user.getEmail() + "!");
+            }
             user.setEmail(email);
         }
         return UserMapper.toUserDto(user);
