@@ -32,7 +32,6 @@ import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.groupingBy;
@@ -93,18 +92,16 @@ public class ItemServiceImpl implements ItemService {
     @Transactional
     public ItemDtoOut findItemById(Long userId, Long itemId) {
         userService.findById(userId);
-        Optional<Item> itemGet = itemRepository.findById(itemId);
-        if (itemGet.isEmpty()) {
-            throw new NotFoundException("У пользователя с id = " + userId + " не " +
-                    "существует вещи с id = " + itemId);
-        }
-        Item item = itemGet.get();
-        ItemDtoOut itemDtoOut = ItemMapper.toItemDtoOut(itemGet.get());
+        Item itemGet = itemRepository.findById(itemId)
+                .orElseThrow(() -> new NotFoundException("У пользователя с id = " + userId + " не " +
+                        "существует вещи с id = " + itemId));
+
+        ItemDtoOut itemDtoOut = ItemMapper.toItemDtoOut(itemGet);
         itemDtoOut.setComments(getAllItemComments(itemId));
-        if (!item.getOwner().getId().equals(userId)) {
+        if (!itemGet.getOwner().getId().equals(userId)) {
             return itemDtoOut;
         }
-        List<Booking> bookings = bookingRepository.findAllByItemAndStatusOrderByStartAsc(item, BookingStatus.APPROVED);
+        List<Booking> bookings = bookingRepository.findAllByItemAndStatusOrderByStartAsc(itemGet, BookingStatus.APPROVED);
         List<BookingDtoOut> bookingDTOList = bookings
                 .stream()
                 .map(BookingMapper::toBookingOut)
@@ -166,14 +163,11 @@ public class ItemServiceImpl implements ItemService {
     @Transactional
     public CommentDtoOut createComment(Long userId, CommentDto commentDto, Long itemId) {
         User user = UserMapper.toUser(userService.findById(userId));
-        Optional<Item> itemById = itemRepository.findById(itemId);
 
-        if (itemById.isEmpty()) {
+        Item itemById = itemRepository.findById(itemId)
+                .orElseThrow(() -> new NotFoundException("У пользователя с id = " + userId + " не " +
+                        "существует вещи с id = " + itemId));
 
-            throw new NotFoundException("У пользователя с id = " + userId + " не " +
-                    "существует вещи с id = " + itemId);
-        }
-        Item item = itemById.get();
 
         List<Booking> userBookings = bookingRepository.findAllByUserBookings(userId, itemId, LocalDateTime.now());
 
@@ -181,7 +175,7 @@ public class ItemServiceImpl implements ItemService {
             throw new ValidationException("У пользователя с id   " + userId + " должно быть хотя бы одно бронирование предмета с id " + itemId);
         }
 
-        return CommentMapper.toCommentDtoOut(commentRepository.save(CommentMapper.toComment(commentDto, item, user)));
+        return CommentMapper.toCommentDtoOut(commentRepository.save(CommentMapper.toComment(commentDto, itemById, user)));
     }
 
     public List<CommentDtoOut> getAllItemComments(Long itemId) {

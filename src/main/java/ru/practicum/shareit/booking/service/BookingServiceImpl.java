@@ -22,7 +22,6 @@ import ru.practicum.shareit.user.service.UserService;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -37,11 +36,8 @@ public class BookingServiceImpl implements BookingService {
     @Transactional
     public BookingDtoOut add(Long userId, BookingDto bookingDto) {
         User user = UserMapper.toUser(userService.findById(userId));
-        Optional<Item> itemById = itemRepository.findById(bookingDto.getItemId());
-        if (itemById.isEmpty()) {
-            throw new NotFoundException("Вещь не найдена.");
-        }
-        Item item = itemById.get();
+        Item item = itemRepository.findById(bookingDto.getItemId())
+                .orElseThrow(() -> new NotFoundException("Вещь не найдена."));
         bookingValidation(bookingDto, user, item);
         Booking booking = BookingMapper.toBooking(user, item, bookingDto);
         return BookingMapper.toBookingOut(bookingRepository.save(booking));
@@ -165,26 +161,24 @@ public class BookingServiceImpl implements BookingService {
     }
 
     private Booking validateBookingDetails(Long userId, Long bookingId, Integer number) {
-        Optional<Booking> bookingById = bookingRepository.findById(bookingId);
-        if (bookingById.isEmpty()) {
-            throw new NotFoundException("Бронь не найдена.");
-        }
-        Booking booking = bookingById.get();
+        Booking bookingById = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new NotFoundException("Бронь не найдена."));
+
         switch (number) {
             case 1:
-                if (!booking.getItem().getOwner().getId().equals(userId)) {
+                if (!bookingById.getItem().getOwner().getId().equals(userId)) {
                     throw new NotFoundException("Пользователь не является владельцем");
                 }
-                if (!booking.getStatus().equals(BookingStatus.WAITING)) {
+                if (!bookingById.getStatus().equals(BookingStatus.WAITING)) {
                     throw new ValidationException("Бронь не cо статусом WAITING");
                 }
-                return booking;
+                return bookingById;
             case 2:
-                if (!booking.getBooker().getId().equals(userId)
-                        && !booking.getItem().getOwner().getId().equals(userId)) {
+                if (!bookingById.getBooker().getId().equals(userId)
+                        && !bookingById.getItem().getOwner().getId().equals(userId)) {
                     throw new NotFoundException("Пользователь не владелeц и не автор бронирования ");
                 }
-                return booking;
+                return bookingById;
         }
         return null;
     }
