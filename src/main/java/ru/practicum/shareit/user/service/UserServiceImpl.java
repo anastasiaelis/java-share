@@ -36,18 +36,21 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public UserDto update(Long id, UserDto userDto) {
-        User user = userRepository.findById(id)
+        User currentUser = userRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Пользователя с " + id + " не существует")
                 );
         String name = userDto.getName();
         if (name != null && !name.isBlank()) {
-            user.setName(name);
+            userDto.setName(name);
         }
         String email = userDto.getEmail();
         if (email != null && !email.isBlank()) {
-            user.setEmail(email);
+            userDto.setEmail(email);
+            if (userRepository.existsByEmail(userDto.getEmail()) && !userDto.getEmail().equals(currentUser.getEmail())) {
+                throw new AlreadyExistException("Ошибка обновления пользователя с email " + userDto.getEmail());
+            }
         }
-        return UserMapper.toUserDto(user);
+        return UserMapper.toUserDto(currentUser);
     }
 
     @Override
