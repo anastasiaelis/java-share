@@ -58,6 +58,9 @@ public class UserServiceImpl implements UserService {
         User currentUser = userRepository.findById(userDto.getId())
                 .orElseThrow(() -> new NotFoundException("Пользователя с " + userDto.getId() + " не существует")
                 );
+        if (userDto.getName() == null) {
+            userDto.setName(currentUser.getName());
+        }
         if (userDto.getEmail() == null) {
             userDto.setEmail(currentUser.getEmail());
         } else {
@@ -65,9 +68,7 @@ public class UserServiceImpl implements UserService {
                 throw new AlreadyExistException("Ошибка обновления пользователя с email " + userDto.getEmail());
             }
         }
-        if (userDto.getName() == null) {
-            userDto.setName(currentUser.getName());
-        }
+
         return UserMapper.toUserDto(userRepository.save(UserMapper.toUser(userDto)));
     }
 
