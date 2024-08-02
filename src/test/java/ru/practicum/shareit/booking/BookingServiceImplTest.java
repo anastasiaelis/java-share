@@ -151,26 +151,6 @@ class BookingServiceImplTest {
         assertEquals(bookingNotFoundException.getMessage(), "Вещь не найдена.");
     }
 
-   // @Test
-    //void update() {
-      //  when(bookingRepository.findById(anyLong())).thenReturn(Optional.of(bookingWaiting));
-        //when(bookingRepository.save(any(Booking.class))).thenReturn(bookingWaiting);
-
-        //BookingDtoOut actualBookingDtoOut = bookingService.update(owner.getId(), bookingWaiting.getId(), true);
-
-        //assertEquals(BookingStatus.APPROVED, actualBookingDtoOut.getStatus());
-   // }
-
- //   @Test
-   // void updateWhenStatusNotApproved() {
-     //   when(bookingRepository.findById(anyLong())).thenReturn(Optional.of(bookingWaiting));
-       // when(bookingRepository.save(any(Booking.class))).thenReturn(bookingWaiting);
-
-        //BookingDtoOut actualBookingDtoOut = bookingService.update(owner.getId(), bookingWaiting.getId(), false);
-
-        //assertEquals(BookingStatus.REJECTED, actualBookingDtoOut.getStatus());
-    //}
-
     @Test
     void updateShouldStatusNotWaiting() {
         when(bookingRepository.findById(anyLong())).thenReturn(Optional.of(booking));
@@ -180,16 +160,6 @@ class BookingServiceImplTest {
 
         assertEquals(bookingValidationException.getMessage(), "Бронь не cо статусом WAITING");
     }
-
-    // @Test
-    //void updateWhenUserIsNotItemOwnerShouldThrowNotFoundException() {
-    //  when(bookingRepository.findById(anyLong())).thenReturn(Optional.of(booking));
-
-    //NotFoundException bookingNotFoundException = assertThrows(NotFoundException.class,
-    //      () -> bookingService.update(userDto.getId(), booking.getId(), true));
-
-    //assertEquals(bookingNotFoundException.getMessage(), "Пользователь не является владельцем");
-    // }
 
     @Test
     void getById() {
