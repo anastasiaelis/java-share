@@ -19,6 +19,7 @@ import static ru.practicum.shareit.item.ItemController.USER_HEADER;
 @RequiredArgsConstructor
 @Slf4j
 @Validated
+
 public class BookingController {
     private final BookingService bookingService;
 

@@ -6,6 +6,4 @@ import ru.practicum.shareit.user.User;
 public interface UserRepository extends JpaRepository<User, Long> {
 
     Boolean existsByEmail(String email);
-
-    //List<User> findAll();
 }

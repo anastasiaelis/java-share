@@ -11,8 +11,6 @@ public interface UserService {
 
     UserDto updateUser(UserDto userDto);
 
-    //Optional<UserDto> getUser(long id);
-
     UserDto getUser(Long id);
 
     @Transactional

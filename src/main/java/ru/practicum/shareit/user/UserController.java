@@ -1,5 +1,6 @@
 package ru.practicum.shareit.user;
 
+import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
@@ -17,6 +18,7 @@ import java.util.Optional;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/users")
+
 public class UserController {
     private final UserService userService;
 

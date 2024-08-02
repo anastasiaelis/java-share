@@ -21,10 +21,11 @@ import java.util.stream.Collectors;
 @Slf4j
 @Validated
 @RequiredArgsConstructor
+
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
-    private final UserMapper userMapper;
+    //private final UserMapper userMapper;
 
     @Override
     @Transactional
@@ -42,25 +43,6 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public UserDto updateUser(UserDto userDto) {
-//        User userExist = UserMapper.toUser(userDto);
-//        User user = userRepository.findById(userDto.getId())
-//                .orElseThrow(() -> new NotFoundException("Пользователя с " + userDto.getId() + " не существует")
-//                );
-//
-//        String name = userDto.getName();
-//        if (name != null && !name.isBlank()) {
-//            user.setName(name);
-//        }
-//        String email = userDto.getEmail();
-//        if (email != null && !email.isBlank()) {
-//            user.setEmail(email);
-//            if (user.getEmail().equals(userExist.getEmail())) {
-//                //&& !user.getEmail().equals(userExist.getEmail())  userRepository.existsByEmail(user.getEmail())
-//                throw new AlreadyExistException("Пользователь с email " + user.getEmail() + "уже существует!");
-//            }
-//
-//        }
-//        return UserMapper.toUserDto(user);
         User currentUser = userRepository.findById(userDto.getId())
                 .orElseThrow(() -> new NotFoundException("Пользователя с " + userDto.getId() + " не существует")
                 );
@@ -77,17 +59,12 @@ public class UserServiceImpl implements UserService {
         return UserMapper.toUserDto(userRepository.save(UserMapper.toUser(userDto)));
     }
 
-   // @Override
-   // public Optional<UserDto> getUser(long id) {
-   //     return Optional.empty();
-   // }
-
     @Override
     @Transactional(readOnly = true)
     public UserDto getUser(Long id) {
         if (userRepository.existsById(id)) {
             log.info("Информация о пользователе " + id + " успешно получена!");
-            return userMapper.toUserDto(userRepository.findById(id).get());
+            return UserMapper.toUserDto(userRepository.findById(id).get());
         }
         throw new NotFoundException("Пользователя с таким id не существует!");
     }
