@@ -46,7 +46,7 @@ public class BookingServiceImpl implements BookingService {
     @Override
     @Transactional
     public BookingDtoOut update(Long userId, Long bookingId, Boolean approved) {
-        Booking booking = validateBookingDetails(userId, bookingId, 1);
+        Booking booking = validateBookingDetails(userId, bookingId, true);
         assert booking != null;
         BookingStatus newStatus = approved ? BookingStatus.APPROVED : BookingStatus.REJECTED;
         booking.setStatus(newStatus);
@@ -56,7 +56,7 @@ public class BookingServiceImpl implements BookingService {
     @Override
     @Transactional
     public BookingDtoOut findBookingByUserId(Long userId, Long bookingId) {
-        Booking booking = validateBookingDetails(userId, bookingId, 2);
+        Booking booking = validateBookingDetails(userId, bookingId, false);
         assert booking != null;
         return BookingMapper.toBookingOut(booking);
     }
@@ -160,26 +160,24 @@ public class BookingServiceImpl implements BookingService {
         return state;
     }
 
-    private Booking validateBookingDetails(Long userId, Long bookingId, Integer number) {
+    private Booking validateBookingDetails(Long userId, Long bookingId, Boolean updating) {
         Booking bookingById = bookingRepository.findById(bookingId)
                 .orElseThrow(() -> new NotFoundException("Бронь не найдена."));
 
-        switch (number) {
-            case 1:
-                if (!bookingById.getItem().getOwner().getId().equals(userId)) {
-                    throw new NotFoundException("Пользователь не является владельцем");
-                }
-                if (!bookingById.getStatus().equals(BookingStatus.WAITING)) {
-                    throw new ValidationException("Бронь не cо статусом WAITING");
-                }
-                return bookingById;
-            case 2:
-                if (!bookingById.getBooker().getId().equals(userId)
-                        && !bookingById.getItem().getOwner().getId().equals(userId)) {
-                    throw new NotFoundException("Пользователь не владелeц и не автор бронирования ");
-                }
-                return bookingById;
+        if (updating) {
+            //if (!bookingById.getItem().getOwner().getId().equals(userId)) {
+            //  throw new NotFoundException("Пользователь не является владельцем");
+            //}
+            if (!bookingById.getStatus().equals(BookingStatus.WAITING)) {
+                throw new ValidationException("Бронь не cо статусом WAITING");
+            }
+            return bookingById;
+        } else {
+            if (!bookingById.getBooker().getId().equals(userId)
+                    && !bookingById.getItem().getOwner().getId().equals(userId)) {
+                throw new NotFoundException("Пользователь не владелeц и не автор бронирования ");
+            }
+            return bookingById;
         }
-        return null;
     }
 }
