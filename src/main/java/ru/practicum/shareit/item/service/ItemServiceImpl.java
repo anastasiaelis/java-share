@@ -47,7 +47,6 @@ import static java.util.stream.Collectors.toList;
 public class ItemServiceImpl implements ItemService {
 
     private final ItemRepository itemRepository;
-   // private final UserRepository userRepository;
     private final BookingRepository bookingRepository;
     private final CommentRepository commentRepository;
     private final UserServiceImpl userService;
@@ -96,7 +95,7 @@ public class ItemServiceImpl implements ItemService {
     @Override
     @Transactional
     public ItemDtoOut findItemById(Long userId, Long itemId) {
-        userService.getUser(userId);
+        //  userService.getUser(userId);
         Item itemGet = itemRepository.findById(itemId)
                 .orElseThrow(() -> new NotFoundException("У пользователя с id = " + userId + " не " +
                         "существует вещи с id = " + itemId));
