@@ -48,6 +48,7 @@ public class BookingServiceImpl implements BookingService {
     @Transactional
     public BookingDtoOut update(Long id, Long userId, Boolean approved) {
         Booking bookingFromDb = validateBookingDetails(id, userId, Boolean.TRUE);
+
         if (bookingFromDb.getItem().getOwner().getId().equals(userId)) {
             throw new ValidationException("Внимание! Заявку на бронирование вещи может подтвердить только " +
                     "владелец вещи!");
@@ -184,7 +185,7 @@ public class BookingServiceImpl implements BookingService {
         } else {
             if (!bookingById.getBooker().getId().equals(userId)
                     && !bookingById.getItem().getOwner().getId().equals(userId)) {
-                throw new NotFoundException("Пользователь не владелeц и не автор бронирования ");
+                throw new ValidationException("Пользователь не владелeц и не автор бронирования ");
             }
             return bookingById;
         }
