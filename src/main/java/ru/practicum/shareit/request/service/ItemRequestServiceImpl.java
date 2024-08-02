@@ -29,7 +29,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     @Override
     @Transactional
     public ItemRequestDtoOut add(Long userId, ItemRequestDto itemRequestDto) {
-        User user = UserMapper.toUser(userService.findById(userId));
+        User user = UserMapper.toUser(userService.getUser(userId));
         ItemRequest request = ItemRequestMapper.toRequest(user, itemRequestDto);
         request.setRequester(user);
         return ItemRequestMapper.toRequestDtoOut(requestRepository.save(request));
@@ -38,7 +38,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     @Override
     @Transactional(readOnly = true)
     public List<ItemRequestDtoOut> getUserRequests(Long userId) {
-        UserMapper.toUser(userService.findById(userId));
+        UserMapper.toUser(userService.getUser(userId));
         List<ItemRequest> itemRequestList = requestRepository.findAllByRequesterId(userId);
         return itemRequestList.stream()
                 .map(ItemRequestMapper::toRequestDtoOut)
@@ -47,7 +47,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
 
     @Override
     public List<ItemRequestDtoOut> getAllRequests(Long userId, Integer from, Integer size) {
-        UserMapper.toUser(userService.findById(userId));
+        UserMapper.toUser(userService.getUser(userId));
         List<ItemRequest> itemRequestList = requestRepository.findAllByRequester_IdNotOrderByCreatedDesc(userId, PageRequest.of(from / size, size));
         return itemRequestList.stream()
                 .map(ItemRequestMapper::toRequestDtoOut)
@@ -56,7 +56,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
 
     @Override
     public ItemRequestDtoOut getRequestById(Long userId, Long requestId) {
-        userService.findById(userId);
+        userService.getUser(userId);
         ItemRequest requestById = requestRepository.findById(requestId)
                 .orElseThrow(() -> new NotFoundException(String.format("Запрос с id: %s " +
                         "не был найден.", requestId)));

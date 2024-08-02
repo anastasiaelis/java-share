@@ -10,6 +10,7 @@ import ru.practicum.shareit.user.service.UserService;
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
 import java.util.List;
+import java.util.Optional;
 
 
 @Slf4j
@@ -22,19 +23,19 @@ public class UserController {
     @PostMapping
     public UserDto add(@Validated({Create.class}) @RequestBody UserDto userDto) {
         log.info("Запрос на добавление пользователя {}", userDto);
-        return userService.add(userDto);
+        return userService.addUser(userDto);
     }
 
     @GetMapping("/{userId}")
-    public UserDto findById(@PathVariable Long userId) {
+    public Optional<UserDto> findById(@PathVariable Long userId) {
         log.info("Запрос на получение пользователя id = {}", userId);
-        return userService.findById(userId);
+        return Optional.ofNullable(userService.getUser(userId));
     }
 
     @GetMapping
     public List<UserDto> findAll() {
         log.info("Запрос на получение списка всех пользователей");
-        return userService.findAll();
+        return userService.getUsers();
     }
 
     @PatchMapping("/{userId}")
@@ -42,7 +43,7 @@ public class UserController {
                           @Positive @PathVariable Long userId) {
         log.info("Запрос на обновление пользователя id = {}", userDto.getId());
         userDto.setId(userId);
-        return userService.update(userDto);
+        return userService.updateUser(userDto);
     }
 
     @DeleteMapping("/{userId}")

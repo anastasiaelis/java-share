@@ -40,7 +40,7 @@ class UserControllerTest {
                 .name("name")
                 .build();
 
-        when(userService.add(userDtoToCreate)).thenReturn(userDtoToCreate);
+        when(userService.addUser(userDtoToCreate)).thenReturn(userDtoToCreate);
 
         String result = mockMvc.perform(post("/users")
                         .contentType("application/json")
@@ -61,14 +61,14 @@ class UserControllerTest {
                 .name("name")
                 .build();
 
-        when(userService.add(userDtoToCreate)).thenReturn(userDtoToCreate);
+        when(userService.addUser(userDtoToCreate)).thenReturn(userDtoToCreate);
 
         mockMvc.perform(post("/users")
                         .contentType("application/json")
                         .content(objectMapper.writeValueAsString(userDtoToCreate)))
                 .andExpect(status().isBadRequest());
 
-        verify(userService, never()).add(userDtoToCreate);
+        verify(userService, never()).addUser(userDtoToCreate);
     }
 
     @Test
@@ -79,14 +79,14 @@ class UserControllerTest {
                 .name("     ")
                 .build();
 
-        when(userService.add(userDtoToCreate)).thenReturn(userDtoToCreate);
+        when(userService.addUser(userDtoToCreate)).thenReturn(userDtoToCreate);
 
         mockMvc.perform(post("/users")
                         .contentType("application/json")
                         .content(objectMapper.writeValueAsString(userDtoToCreate)))
                 .andExpect(status().isBadRequest());
 
-        verify(userService, never()).add(userDtoToCreate);
+        verify(userService, never()).addUser(userDtoToCreate);
     }
 
     @Test
@@ -102,7 +102,7 @@ class UserControllerTest {
                 .email("cc@update.com")
                 .name("cc")
                 .build();
-        when(userService.update(userDtoToUpdateNew)).thenReturn(userDtoToUpdateNew);
+        when(userService.updateUser(userDtoToUpdateNew)).thenReturn(userDtoToUpdateNew);
         Long userId = userDtoToUpdate.getId();
         String result = mockMvc.perform(patch("/users/{userId}", userId)
                         .contentType("application/json")
@@ -123,26 +123,26 @@ class UserControllerTest {
                 .name("update")
                 .build();
 
-        when(userService.update(userDtoToUpdate)).thenReturn(userDtoToUpdate);
+        when(userService.updateUser(userDtoToUpdate)).thenReturn(userDtoToUpdate);
 
         mockMvc.perform(post("/users")
                         .contentType("application/json")
                         .content(objectMapper.writeValueAsString(userDtoToUpdate)))
                 .andExpect(status().isBadRequest());
 
-        verify(userService, never()).add(userDtoToUpdate);
+        verify(userService, never()).addUser(userDtoToUpdate);
     }
 
     @Test
     @SneakyThrows
     void get() {
-        long userId = 0L;
+        long userId = 2L;
 
         mockMvc.perform(MockMvcRequestBuilders.get("/users/{userId}", userId))
                 .andDo(print())
                 .andExpect(status().isOk());
 
-        verify(userService).findById(userId);
+        verify(userService).getUser(userId);
     }
 
     @Test
@@ -150,7 +150,7 @@ class UserControllerTest {
     void findAll() {
         List<UserDto> usersDtoToExpect = List.of(UserDto.builder().name("name").email("email@email.com").build());
 
-        when(userService.findAll()).thenReturn(usersDtoToExpect);
+        when(userService.getUsers()).thenReturn(usersDtoToExpect);
 
         String result = mockMvc.perform(MockMvcRequestBuilders.get("/users"))
                 .andExpect(status().isOk())

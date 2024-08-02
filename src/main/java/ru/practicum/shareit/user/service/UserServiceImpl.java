@@ -1,9 +1,10 @@
 package ru.practicum.shareit.user.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.annotation.Validated;
 import ru.practicum.shareit.exceptions.AlreadyExistException;
 import ru.practicum.shareit.exceptions.NotFoundException;
 import ru.practicum.shareit.user.User;
@@ -12,23 +13,22 @@ import ru.practicum.shareit.user.UserMapper;
 import ru.practicum.shareit.user.repository.UserRepository;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 
 @Service
+@Slf4j
+@Validated
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
-    UserRepository userRepository;
-
-    @Autowired
-    public UserServiceImpl(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
+    private final UserRepository userRepository;
+    private final UserMapper userMapper;
 
     @Override
     @Transactional
-    public UserDto add(UserDto userDto) {
+    public UserDto addUser(UserDto userDto) {
         User user = UserMapper.toUser(userDto);
         try {
             user = userRepository.save(user);
@@ -41,7 +41,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public UserDto update(UserDto userDto) {
+    public UserDto updateUser(UserDto userDto) {
 //        User userExist = UserMapper.toUser(userDto);
 //        User user = userRepository.findById(userDto.getId())
 //                .orElseThrow(() -> new NotFoundException("Пользователя с " + userDto.getId() + " не существует")
@@ -77,13 +77,19 @@ public class UserServiceImpl implements UserService {
         return UserMapper.toUserDto(userRepository.save(UserMapper.toUser(userDto)));
     }
 
+   // @Override
+   // public Optional<UserDto> getUser(long id) {
+   //     return Optional.empty();
+   // }
+
     @Override
-    @Transactional
-    public UserDto findById(Long id) {
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Пользователя с " + id + " не существует")
-                );
-        return UserMapper.toUserDto(user);
+    @Transactional(readOnly = true)
+    public UserDto getUser(Long id) {
+        if (userRepository.existsById(id)) {
+            log.info("Информация о пользователе " + id + " успешно получена!");
+            return userMapper.toUserDto(userRepository.findById(id).get());
+        }
+        throw new NotFoundException("Пользователя с таким id не существует!");
     }
 
     @Override
@@ -94,9 +100,14 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public List<UserDto> findAll() {
+    public List<UserDto> getUsers() {
         return userRepository.findAll().stream()
                 .map(UserMapper::toUserDto)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public void deleteUser(long id) {
+
     }
 }

@@ -1,6 +1,7 @@
 package ru.practicum.shareit.item.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -26,12 +27,15 @@ import ru.practicum.shareit.request.repository.ItemRequestRepository;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.UserDto;
 import ru.practicum.shareit.user.UserMapper;
+import ru.practicum.shareit.user.repository.UserRepository;
 import ru.practicum.shareit.user.service.UserService;
+import ru.practicum.shareit.user.service.UserServiceImpl;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.groupingBy;
@@ -40,20 +44,23 @@ import static java.util.stream.Collectors.toList;
 
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
+@Slf4j
+@Transactional
 public class ItemServiceImpl implements ItemService {
+
     private final ItemRepository itemRepository;
-    private final ItemRequestRepository itemRequestRepository;
-    private final CommentRepository commentRepository;
+    private final UserRepository userRepository;
     private final BookingRepository bookingRepository;
-    private final UserService userService;
+    private final CommentRepository commentRepository;
+    private final UserServiceImpl userService;
+    private final ItemRequestRepository itemRequestRepository;
 
     @Override
     @Transactional
     public ItemDtoOut add(Long userId, ItemDto itemDto) {
-        UserDto user = userService.findById(userId);
+        Optional<UserDto> user = Optional.ofNullable(userService.getUser(userId));
         Item item = ItemMapper.toItem(itemDto);
-        item.setOwner((UserMapper.toUser(user)));
+        item.setOwner((UserMapper.toUser(user.get())));
         if (itemDto.getRequestId() != null) {
             item.setRequest(itemRequestRepository.getReferenceById(itemDto.getRequestId()));
         }
@@ -64,11 +71,11 @@ public class ItemServiceImpl implements ItemService {
     @Override
     @Transactional
     public ItemDtoOut update(Long userId, Long itemId, ItemDto itemDto) {
-        UserDto user = userService.findById(userId);
+        Optional<UserDto> user = Optional.ofNullable(userService.getUser(userId));
         Item item = itemRepository.findById(itemId)
                 .orElseThrow(() -> new NotFoundException("Вещи с " + itemId + " не существует")
                 );
-        if (!UserMapper.toUser(user).equals(item.getOwner())) {
+        if (!UserMapper.toUser(user.get()).equals(item.getOwner())) {
             throw new NotFoundException("Пользователь с id = " + userId +
                     " не является собственником вещи id = " + itemId);
         }
@@ -91,7 +98,7 @@ public class ItemServiceImpl implements ItemService {
     @Override
     @Transactional
     public ItemDtoOut findItemById(Long userId, Long itemId) {
-        userService.findById(userId);
+        userService.getUser(userId);
         Item itemGet = itemRepository.findById(itemId)
                 .orElseThrow(() -> new NotFoundException("У пользователя с id = " + userId + " не " +
                         "существует вещи с id = " + itemId));
@@ -116,7 +123,7 @@ public class ItemServiceImpl implements ItemService {
     @Override
     @Transactional
     public List<ItemDtoOut> findAll(Long userId, Integer from, Integer size) {
-        UserDto owner = userService.findById(userId);
+        Optional<UserDto> owner = Optional.ofNullable(userService.getUser(userId));
         Pageable pageable = PageRequest.of(from / size, size);
         List<Item> itemList = itemRepository.findAllByOwnerId(userId, pageable);
         List<Long> idList = itemList.stream()
@@ -148,7 +155,7 @@ public class ItemServiceImpl implements ItemService {
     @Override
     @Transactional
     public List<ItemDtoOut> search(Long userId, String text, Integer from, Integer size) {
-        userService.findById(userId);
+        userService.getUser(userId);
         Pageable pageable = PageRequest.of(from / size, size);
         if (text.isBlank()) {
             return Collections.emptyList();
@@ -162,7 +169,7 @@ public class ItemServiceImpl implements ItemService {
     @Override
     @Transactional
     public CommentDtoOut createComment(Long userId, CommentDto commentDto, Long itemId) {
-        User user = UserMapper.toUser(userService.findById(userId));
+        User user = UserMapper.toUser(userService.getUser(userId));
 
         Item itemById = itemRepository.findById(itemId)
                 .orElseThrow(() -> new NotFoundException("У пользователя с id = " + userId + " не " +

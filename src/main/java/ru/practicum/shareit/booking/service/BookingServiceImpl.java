@@ -35,7 +35,7 @@ public class BookingServiceImpl implements BookingService {
     @Override
     @Transactional
     public BookingDtoOut add(Long userId, BookingDto bookingDto) {
-        User user = UserMapper.toUser(userService.findById(userId));
+        User user = UserMapper.toUser(userService.getUser(userId));
         Item item = itemRepository.findById(bookingDto.getItemId())
                 .orElseThrow(() -> new NotFoundException("Вещь не найдена."));
         bookingValidation(bookingDto, user, item);
@@ -65,7 +65,7 @@ public class BookingServiceImpl implements BookingService {
     @Transactional
     public List<BookingDtoOut> findAll(Long bookerId, String state, Integer from, Integer size) {
         Pageable pageable = PageRequest.of(from / size, size);
-        userService.findById(bookerId);
+        userService.getUser(bookerId);
         switch (validState(state)) {
             case ALL:
                 return bookingRepository.findAllBookingsByBookerId(bookerId, pageable).stream()
@@ -104,7 +104,7 @@ public class BookingServiceImpl implements BookingService {
     @Transactional
     public List<BookingDtoOut> findAllOwner(Long ownerId, String state, Integer from, Integer size) {
         Pageable pageable = PageRequest.of(from / size, size);
-        userService.findById(ownerId);
+        userService.getUser(ownerId);
         switch (validState(state)) {
             case ALL:
                 return bookingRepository.findAllBookingsByOwnerId(ownerId, pageable).stream()
@@ -165,9 +165,9 @@ public class BookingServiceImpl implements BookingService {
                 .orElseThrow(() -> new NotFoundException("Бронь не найдена."));
 
         if (updating) {
-            //if (!bookingById.getItem().getOwner().getId().equals(userId)) {
-            //  throw new NotFoundException("Пользователь не является владельцем");
-            //}
+            if (!bookingById.getItem().getOwner().getId().equals(userId)) {
+                throw new NotFoundException("Пользователь не является владельцем");
+            }
             if (!bookingById.getStatus().equals(BookingStatus.WAITING)) {
                 throw new ValidationException("Бронь не cо статусом WAITING");
             }

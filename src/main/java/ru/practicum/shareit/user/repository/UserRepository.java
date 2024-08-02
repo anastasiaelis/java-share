@@ -7,14 +7,9 @@ import javax.validation.constraints.NotNull;
 import java.util.List;
 
 public interface UserRepository extends JpaRepository<User, Long> {
-
-    User getUserById(Long id);
-
-
-    @NotNull
-    User save(User user);
+   // User save(User user);
 
     Boolean existsByEmail(String email);
 
-    List<User> findAll();
+    //List<User> findAll();
 }

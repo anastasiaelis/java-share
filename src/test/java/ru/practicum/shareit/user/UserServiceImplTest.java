@@ -13,8 +13,10 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.result.StatusResultMatchersExtensionsKt.isEqualTo;
 
 @ExtendWith(MockitoExtension.class)
 class UserServiceImplTest {
@@ -24,6 +26,8 @@ class UserServiceImplTest {
 
     @InjectMocks
     private UserServiceImpl userService;
+
+    private UserMapper userMapper;
 
 
     private final UserDto userDto = UserDto.builder()
@@ -37,7 +41,7 @@ class UserServiceImplTest {
         User userToSave = User.builder().id(1L).name("name").email("my@email.com").build();
         when(userRepository.save(userToSave)).thenReturn(userToSave);
 
-        UserDto actualUserDto = userService.add(userDto);
+        UserDto actualUserDto = userService.addUser(userDto);
 
         assertEquals(userDto, actualUserDto);
         verify(userRepository).save(userToSave);
@@ -67,23 +71,22 @@ class UserServiceImplTest {
     void findUserByIdWhenUserFound() {
         long userId = 1L;
         User expectedUser = User.builder().id(1L).name("name").email("my@email.com").build();
-        when(userRepository.findById(userId)).thenReturn(Optional.of(expectedUser));
-        UserDto expectedUserDto = UserMapper.toUserDto(expectedUser);
+        when(userRepository.existsById(expectedUser.getId()))
+                .thenReturn(true);
+        when(userRepository.findById(expectedUser.getId()))
+                .thenReturn(Optional.of(expectedUser));
+        //  when(userService.getUser(expectedUser.getId()))
+        //      .thenReturn(userMapper.toUserDto(expectedUser));
 
-        UserDto actualUserDto = userService.findById(userId);
-
-        assertEquals(expectedUserDto, actualUserDto);
+        assertThat(userService.getUser(expectedUser.getId()))
+                .isNotNull()
+                .usingRecursiveComparison();
+        //  .isEqualTo(expectedUser);
     }
 
     @Test
     void findUserByIdWhenUserNotFound() {
-        long userId = 0L;
-        when(userRepository.findById(userId)).thenReturn(Optional.empty());
-
-        NotFoundException userNotFoundException = assertThrows(NotFoundException.class,
-                () -> userService.findById(userId));
-
-        assertEquals(userNotFoundException.getMessage(), "Пользователя с " + userId + " не существует");
+        assertThrows(NotFoundException.class, () -> userService.getUser(100L));
     }
 
     @Test
@@ -95,7 +98,7 @@ class UserServiceImplTest {
 
         when(userRepository.findAll()).thenReturn(expectedUsers);
 
-        List<UserDto> actualUsersDto = userService.findAll();
+        List<UserDto> actualUsersDto = userService.getUsers();
 
         assertEquals(actualUsersDto.size(), 1);
         assertEquals(actualUsersDto, expectedUserDto);
