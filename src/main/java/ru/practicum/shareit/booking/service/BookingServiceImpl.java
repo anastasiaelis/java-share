@@ -46,7 +46,7 @@ public class BookingServiceImpl implements BookingService {
     @Override
     @Transactional
     public BookingDtoOut update(Long id, Long userId, Boolean approved) {
-        Booking bookingFromDb = validateBookingDetails(id, userId, true);
+        Booking bookingFromDb = validateBookingDetails(id, userId, Boolean.TRUE);
         if (bookingFromDb.getItem().getOwner().getId() != userId) {
             throw new NotFoundException("Внимание! Заявку на бронирование вещи может подтвердить только " +
                     "владелец вещи!");
