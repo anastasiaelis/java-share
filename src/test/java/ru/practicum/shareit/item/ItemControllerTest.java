@@ -129,8 +129,8 @@ class ItemControllerTest {
     @Test
     @SneakyThrows
     void getShouldReturnStatusOk() {
-        Long itemId = 2L;
-        Long userId = 1L;
+        Long itemId = 0L;
+        Long userId = 0L;
         ItemDtoOut itemDtoToCreate = ItemDtoOut.builder()
                 .id(itemId)
                 .description("")

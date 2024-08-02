@@ -645,6 +645,94 @@
 					"response": []
 				},
 				{
+					"name": "User update with existing email",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const main = async () => {\r",
+									"    const api = new API(pm);\r",
+									"    const rnd = new RandomUtils();\r",
+									"\r",
+									"    try {\r",
+									"        user = rnd.getUser();\r",
+									"        us = await api.addUser(user);\r",
+									"        user2 = rnd.getUser();\r",
+									"        us2 = await api.addUser(user2)\r",
+									"        pm.collectionVariables.set(\"userId\", us2.id);\r",
+									"        usa = rnd.getUser()\r",
+									"        pm.collectionVariables.set(\"userName\", usa.name);\r",
+									"        pm.collectionVariables.set(\"userEmail\", user.email);\r",
+									"    } catch(err) {\r",
+									"        console.error(\"Ошибка при подготовке тестовых данных.\", err);\r",
+									"    }\r",
+									"\r",
+									"};\r",
+									"\r",
+									"const interval = setInterval(() => {}, 1000);\r",
+									"\r",
+									"setTimeout(async () => \r",
+									"    {\r",
+									"        try {\r",
+									"            await main();\r",
+									"        } catch (e) {\r",
+									"            console.error(e);\r",
+									"        } finally {\r",
+									"            clearInterval(interval);\r",
+									"        }\r",
+									"    },  \r",
+									"    100 \r",
+									");"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 409\", function () {\r",
+									"    pm.response.to.have.status(409);\r",
+									"});\r",
+									"pm.test(\"Response have body\", function () {\r",
+									"    pm.response.to.be.withBody;\r",
+									"    pm.response.to.be.json;\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"{{userName}}\",\n    \"email\": \"{{userEmail}}\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/users/{{userId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users",
+								"{{userId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "Get user",
 					"event": [
 						{
@@ -1931,6 +2019,107 @@
 							"mode": "raw",
 							"raw": "{\n    \"name\": \"{{itemName}}\"\n}"
 						},
+						"url": {
+							"raw": "{{baseUrl}}/items/{{itemId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"items",
+								"{{itemId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Item get",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.be.ok;",
+									"});",
+									"pm.test(\"Response have body\", function () {",
+									"    pm.response.to.be.withBody;",
+									"    pm.response.to.be.json;",
+									"});",
+									"var item = pm.collectionVariables.get(\"item\");",
+									"",
+									"pm.test(\"Response data equal to request\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property('id');",
+									"    pm.expect(jsonData).to.have.property('name');",
+									"    pm.expect(jsonData).to.have.property('description');",
+									"    pm.expect(jsonData).to.have.property('available');",
+									"    pm.expect(jsonData.name, `\"name\" must be ${item.name}`).to.eql(item.name);",
+									"    pm.expect(jsonData.description, `\"description\" must be ${item.description}`).to.eql(item.description);",
+									"    pm.expect(jsonData.available.toString(), `\"available\" must be ${item.available}`).to.eql(item.available.toString());",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const main = async () => {\r",
+									"    const api = new API(pm);\r",
+									"    const rnd = new RandomUtils();\r",
+									"\r",
+									"    try {\r",
+									"        user = await api.addUser(rnd.getUser());\r",
+									"        pm.collectionVariables.set(\"userId\", user.id);\r",
+									"        item = await api.addItem(rnd.getItem(), user.id)\r",
+									"        pm.collectionVariables.set(\"item\", item);\r",
+									"        pm.collectionVariables.set(\"itemId\", item.id);\r",
+									"        pm.collectionVariables.set(\"itemName\", item.name);\r",
+									"        pm.collectionVariables.set(\"itemAvailable\", item.available);\r",
+									"        pm.collectionVariables.set(\"itemDescription\", item.description);\r",
+									"    } catch(err) {\r",
+									"        console.error(\"Ошибка при подготовке тестовых данных.\", err);\r",
+									"    }\r",
+									"\r",
+									"};\r",
+									"\r",
+									"const interval = setInterval(() => {}, 1000);\r",
+									"\r",
+									"setTimeout(async () => \r",
+									"    {\r",
+									"        try {\r",
+									"            await main();\r",
+									"        } catch (e) {\r",
+									"            console.error(e);\r",
+									"        } finally {\r",
+									"            clearInterval(interval);\r",
+									"        }\r",
+									"    },  \r",
+									"    100 \r",
+									");"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-Sharer-User-Id",
+								"value": "3",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "*/*",
+								"type": "text"
+							}
+						],
 						"url": {
 							"raw": "{{baseUrl}}/items/{{itemId}}",
 							"host": [

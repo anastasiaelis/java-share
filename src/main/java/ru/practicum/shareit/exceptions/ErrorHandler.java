@@ -45,7 +45,6 @@ public class ErrorHandler {
     @ExceptionHandler
     @ResponseStatus(HttpStatus.CONFLICT)
     public ErrorResponse handleAlreadyExistException(final AlreadyExistException e) {
-        log.warn("Получен статус 409 CONFLICT {}", e.getMessage(), e);
         return new ErrorResponse(e.getMessage());
     }
 }

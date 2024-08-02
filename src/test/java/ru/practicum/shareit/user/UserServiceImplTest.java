@@ -83,7 +83,7 @@ class UserServiceImplTest {
         NotFoundException userNotFoundException = assertThrows(NotFoundException.class,
                 () -> userService.findById(userId));
 
-        assertEquals(userNotFoundException.getMessage(), "Пользователя с id " + userId + " не существует");
+        assertEquals(userNotFoundException.getMessage(), "Пользователя с " + userId + " не существует");
     }
 
     @Test

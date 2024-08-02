@@ -36,20 +36,38 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public UserDto update(UserDto userDto) {
+//        User userExist = UserMapper.toUser(userDto);
+//        User user = userRepository.findById(userDto.getId())
+//                .orElseThrow(() -> new NotFoundException("Пользователя с " + userDto.getId() + " не существует")
+//                );
+//
+//        String name = userDto.getName();
+//        if (name != null && !name.isBlank()) {
+//            user.setName(name);
+//        }
+//        String email = userDto.getEmail();
+//        if (email != null && !email.isBlank()) {
+//            user.setEmail(email);
+//            if (user.getEmail().equals(userExist.getEmail())) {
+//                //&& !user.getEmail().equals(userExist.getEmail())  userRepository.existsByEmail(user.getEmail())
+//                throw new AlreadyExistException("Пользователь с email " + user.getEmail() + "уже существует!");
+//            }
+//
+//        }
+//        return UserMapper.toUserDto(user);
         User currentUser = userRepository.findById(userDto.getId())
                 .orElseThrow(() -> new NotFoundException("Пользователя с " + userDto.getId() + " не существует")
                 );
-        if (userDto.getName() == null) {
-            userDto.setName(currentUser.getName());
-        }
         if (userDto.getEmail() == null) {
             userDto.setEmail(currentUser.getEmail());
         } else {
-            if (userRepository.existsByEmail(userDto.getEmail()) && userDto.getEmail().equals(currentUser.getEmail())) {
+            if (userRepository.existsByEmail(userDto.getEmail()) && !userDto.getEmail().equals(currentUser.getEmail())) {
                 throw new AlreadyExistException("Ошибка обновления пользователя с email " + userDto.getEmail());
             }
         }
-
+        if (userDto.getName() == null) {
+            userDto.setName(currentUser.getName());
+        }
         return UserMapper.toUserDto(userRepository.save(UserMapper.toUser(userDto)));
     }
 
@@ -57,7 +75,7 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public UserDto findById(Long id) {
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Пользователя с id " + id + " не существует")
+                .orElseThrow(() -> new NotFoundException("Пользователя с " + id + " не существует")
                 );
         return UserMapper.toUserDto(user);
     }
