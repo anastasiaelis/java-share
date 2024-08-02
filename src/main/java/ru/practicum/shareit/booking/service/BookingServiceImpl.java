@@ -51,13 +51,11 @@ public class BookingServiceImpl implements BookingService {
             throw new NotFoundException("Внимание! Заявку на бронирование вещи может подтвердить только " +
                     "владелец вещи!");
         }
-        if ((approved) && (bookingFromDb.getStatus().equals(BookingStatus.REJECTED)) || bookingFromDb.getStatus().equals(BookingStatus.WAITING))
-        {
+        if ((approved) && (bookingFromDb.getStatus().equals(BookingStatus.REJECTED)) || bookingFromDb.getStatus().equals(BookingStatus.WAITING)) {
             bookingFromDb.setStatus(BookingStatus.APPROVED);
             // log.info("Заявка под номером " + id + " успешно одобрена!");
             return BookingMapper.toBookingOut(bookingRepository.save(bookingFromDb));
-        } else
-        if ((!approved) && (bookingFromDb.getStatus().equals(BookingStatus.APPROVED) || bookingFromDb.getStatus().equals(BookingStatus.WAITING))) {
+        } else if ((!approved) && (bookingFromDb.getStatus().equals(BookingStatus.APPROVED) || bookingFromDb.getStatus().equals(BookingStatus.WAITING))) {
             bookingFromDb.setStatus(BookingStatus.REJECTED);
             //log.info("Заявка под номером " + id + " успешно одобрена!");
             return BookingMapper.toBookingOut(bookingRepository.save(bookingFromDb));
