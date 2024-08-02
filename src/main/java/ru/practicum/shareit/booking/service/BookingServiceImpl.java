@@ -19,6 +19,7 @@ import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.UserMapper;
 import ru.practicum.shareit.user.service.UserService;
+import lombok.extern.slf4j.Slf4j.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -48,16 +49,15 @@ public class BookingServiceImpl implements BookingService {
     public BookingDtoOut update(Long id, Long userId, Boolean approved) {
         Booking bookingFromDb = validateBookingDetails(id, userId, Boolean.TRUE);
         if (bookingFromDb.getItem().getOwner().getId().equals(userId)) {
-            throw new NotFoundException("Внимание! Заявку на бронирование вещи может подтвердить только " +
+            throw new ValidationException("Внимание! Заявку на бронирование вещи может подтвердить только " +
                     "владелец вещи!");
         }
         if ((approved) && (bookingFromDb.getStatus().equals(BookingStatus.REJECTED)) || bookingFromDb.getStatus().equals(BookingStatus.WAITING)) {
             bookingFromDb.setStatus(BookingStatus.APPROVED);
-            // log.info("Заявка под номером " + id + " успешно одобрена!");
             return BookingMapper.toBookingOut(bookingRepository.save(bookingFromDb));
+
         } else if ((!approved) && (bookingFromDb.getStatus().equals(BookingStatus.APPROVED) || bookingFromDb.getStatus().equals(BookingStatus.WAITING))) {
             bookingFromDb.setStatus(BookingStatus.REJECTED);
-            //log.info("Заявка под номером " + id + " успешно одобрена!");
             return BookingMapper.toBookingOut(bookingRepository.save(bookingFromDb));
         } else {
             throw new ValidationException("Внимание! Нельзя изменить статус заявки на уже имеющийся!");
