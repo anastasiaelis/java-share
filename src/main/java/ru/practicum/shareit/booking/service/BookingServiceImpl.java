@@ -45,13 +45,27 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     @Transactional
-    public BookingDtoOut update(Long userId, Long bookingId, Boolean approved) {
-        Booking booking = validateBookingDetails(userId, bookingId, true);
-        assert booking != null;
-        BookingStatus newStatus = approved ? BookingStatus.APPROVED : BookingStatus.REJECTED;
-        booking.setStatus(newStatus);
-        return BookingMapper.toBookingOut(bookingRepository.save(booking));
+    public BookingDtoOut update(Long id, Long userId, Boolean approved) {
+        Booking bookingFromDb = validateBookingDetails(id, userId, true);
+        if (bookingFromDb.getItem().getOwner().getId() != userId) {
+            throw new NotFoundException("Внимание! Заявку на бронирование вещи может подтвердить только " +
+                    "владелец вещи!");
+        }
+        if ((approved) && (bookingFromDb.getStatus().equals(BookingStatus.REJECTED)) || bookingFromDb.getStatus().equals(BookingStatus.WAITING))
+        {
+            bookingFromDb.setStatus(BookingStatus.APPROVED);
+            // log.info("Заявка под номером " + id + " успешно одобрена!");
+            return BookingMapper.toBookingOut(bookingRepository.save(bookingFromDb));
+        } else
+        if ((!approved) && (bookingFromDb.getStatus().equals(BookingStatus.APPROVED) || bookingFromDb.getStatus().equals(BookingStatus.WAITING))) {
+            bookingFromDb.setStatus(BookingStatus.REJECTED);
+            //log.info("Заявка под номером " + id + " успешно одобрена!");
+            return BookingMapper.toBookingOut(bookingRepository.save(bookingFromDb));
+        } else {
+            throw new ValidationException("Внимание! Нельзя изменить статус заявки на уже имеющийся!");
+        }
     }
+
 
     @Override
     @Transactional
@@ -165,9 +179,6 @@ public class BookingServiceImpl implements BookingService {
                 .orElseThrow(() -> new NotFoundException("Бронь не найдена."));
 
         if (updating) {
-            // if (!bookingById.getItem().getOwner().getId().equals(userId)) {
-            //   throw new NotFoundException("Пользователь не является владельцем");
-            //}
             if (!bookingById.getStatus().equals(BookingStatus.WAITING)) {
                 throw new ValidationException("Бронь не cо статусом WAITING");
             }
