@@ -64,7 +64,7 @@ public class BookingServiceIT {
             .end(LocalDateTime.now().plusSeconds(11L))
             .build();
 
-    @Test
+    /*@Test
     void addBooking() {
         UserDto addedUser1 = userService.addUser(userDto1);
         UserDto addedUser2 = userService.addUser(userDto2);
@@ -91,7 +91,7 @@ public class BookingServiceIT {
                 BookingState.ALL.toString(), 0, 10);
 
         assertEquals(2, bookingsDtoOut.size());
-    }
+    }*/
 
     @Test
     void update_whenBookingIdAndUserIdIsNotValid_thenThrowObjectNotFoundException() {

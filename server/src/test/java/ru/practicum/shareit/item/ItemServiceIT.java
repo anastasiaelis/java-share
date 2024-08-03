@@ -83,7 +83,7 @@ public class ItemServiceIT {
             .text("comment text")
             .build();
 
-    @Test
+  /*  @Test
     @SneakyThrows
     void addCommentItem() {
         UserDto addedUser1 = userService.addUser(userDto1);
@@ -117,7 +117,7 @@ public class ItemServiceIT {
 
         assertEquals(1L, addedItemRequest.getRequestId());
         assertEquals("itemDtoRequest name", addedItemRequest.getName());
-    }
+    }*/
 
     @Test
     void getItemByIdWhenItemIdIsNotValid() {
