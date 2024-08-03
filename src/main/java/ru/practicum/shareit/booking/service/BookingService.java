@@ -17,3 +17,4 @@ public interface BookingService {
 
     List<BookingDtoOut> findAllOwner(Long userId, String state, Integer from, Integer size);
 }
+
