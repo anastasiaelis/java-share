@@ -86,8 +86,8 @@ public class ItemServiceIT {
     @Test
     @SneakyThrows
     void addCommentItem() {
-        UserDto addedUser1 = userService.add(userDto1);
-        UserDto addedUser2 = userService.add(userDto2);
+        UserDto addedUser1 = userService.addUser(userDto1);
+        UserDto addedUser2 = userService.addUser(userDto2);
         ItemDtoOut addedItem = itemService.add(addedUser2.getId(), itemDto2);
         BookingDtoOut bookingDtoOut = bookingService.add(addedUser1.getId(), bookingDto);
 
@@ -101,7 +101,7 @@ public class ItemServiceIT {
 
     @Test
     void addNewItem() {
-        UserDto addedUser = userService.add(userDto1);
+        UserDto addedUser = userService.addUser(userDto1);
         ItemDtoOut addedItem = itemService.add(addedUser.getId(), itemDto1);
 
         assertEquals(1L, addedItem.getId());
@@ -110,7 +110,7 @@ public class ItemServiceIT {
 
     @Test
     void addRequestItem() {
-        UserDto addedUser = userService.add(userDto1);
+        UserDto addedUser = userService.addUser(userDto1);
         requestService.add(addedUser.getId(), requestDto);
 
         ItemDtoOut addedItemRequest = itemService.add(addedUser.getId(), itemDtoRequest);

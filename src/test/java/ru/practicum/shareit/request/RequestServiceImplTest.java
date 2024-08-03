@@ -67,7 +67,7 @@ class RequestServiceImplTest {
     void addNewRequest() {
         ItemRequestDto requestDto = ItemRequestMapper.toRequestDto(request);
         ItemRequestDtoOut expectedRequestDto = ItemRequestMapper.toRequestDtoOut(request);
-        when(userService.findById(user.getId())).thenReturn(userDto);
+        when(userService.getUser(user.getId())).thenReturn(userDto);
         when(requestRepository.save(any(ItemRequest.class))).thenReturn(request);
 
         ItemRequestDtoOut actualRequestDto = requestService.add(user.getId(), requestDto);
@@ -78,7 +78,7 @@ class RequestServiceImplTest {
     @Test
     void getUserRequests() {
         List<ItemRequestDtoOut> expectedRequestsDto = List.of(ItemRequestMapper.toRequestDtoOut(request));
-        when(userService.findById(user.getId())).thenReturn(userDto);
+        when(userService.getUser(user.getId())).thenReturn(userDto);
         when(requestRepository.findAllByRequesterId(userDto.getId())).thenReturn(List.of(request));
 
         List<ItemRequestDtoOut> actualRequestsDto = requestService.getUserRequests(userDto.getId());
@@ -89,7 +89,7 @@ class RequestServiceImplTest {
     @Test
     void getAllRequests() {
         List<ItemRequestDtoOut> expectedRequestsDto = List.of(ItemRequestMapper.toRequestDtoOut(request));
-        when(userService.findById(user.getId())).thenReturn(userDto);
+        when(userService.getUser(user.getId())).thenReturn(userDto);
         when(requestRepository.findAllByRequester_IdNotOrderByCreatedDesc(anyLong(), any(PageRequest.class)))
                 .thenReturn(List.of(request));
 
@@ -101,7 +101,7 @@ class RequestServiceImplTest {
     @Test
     void getRequestById() {
         ItemRequestDtoOut expectedRequestDto = ItemRequestMapper.toRequestDtoOut(request);
-        when(userService.findById(user.getId())).thenReturn(userDto);
+        when(userService.getUser(user.getId())).thenReturn(userDto);
         when(requestRepository.findById(request.getId())).thenReturn(Optional.of(request));
 
         ItemRequestDtoOut actualRequestDto = requestService.getRequestById(userDto.getId(), request.getId());
@@ -111,7 +111,7 @@ class RequestServiceImplTest {
 
     @Test
     void getRequestByIdWhenRequestIdIsNotValidShouldThrowObjectNotFoundException() {
-        when(userService.findById(user.getId())).thenReturn(userDto);
+        when(userService.getUser(user.getId())).thenReturn(userDto);
         when(requestRepository.findById(request.getId())).thenReturn(Optional.empty());
 
         NotFoundException requestNotFoundException = assertThrows(NotFoundException.class,

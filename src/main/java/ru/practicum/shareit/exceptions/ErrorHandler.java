@@ -41,4 +41,10 @@ public class ErrorHandler {
                 e.getMessage()
         );
     }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ErrorResponse handleAlreadyExistException(final AlreadyExistException e) {
+        return new ErrorResponse(e.getMessage());
+    }
 }

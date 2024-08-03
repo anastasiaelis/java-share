@@ -25,7 +25,7 @@ public class UserServiceIT {
 
     @Test
     void addNewUser() {
-        UserDto actualUserDto = userService.add(userDto);
+        UserDto actualUserDto = userService.addUser(userDto);
 
         assertEquals(1L, actualUserDto.getId());
         assertEquals("name", actualUserDto.getName());
@@ -37,6 +37,6 @@ public class UserServiceIT {
         Long userId = 2L;
 
         Assertions
-                .assertThrows(NotFoundException.class, () -> userService.findById(userId));
+                .assertThrows(NotFoundException.class, () -> userService.getUser(userId));
     }
 }

@@ -66,8 +66,8 @@ public class BookingServiceIT {
 
     @Test
     void addBooking() {
-        UserDto addedUser1 = userService.add(userDto1);
-        UserDto addedUser2 = userService.add(userDto2);
+        UserDto addedUser1 = userService.addUser(userDto1);
+        UserDto addedUser2 = userService.addUser(userDto2);
         itemService.add(addedUser1.getId(), itemDto1);
         itemService.add(addedUser2.getId(), itemDto2);
 

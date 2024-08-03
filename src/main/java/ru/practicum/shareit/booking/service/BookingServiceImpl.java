@@ -19,10 +19,10 @@ import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.UserMapper;
 import ru.practicum.shareit.user.service.UserService;
+import lombok.extern.slf4j.Slf4j.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -36,12 +36,9 @@ public class BookingServiceImpl implements BookingService {
     @Override
     @Transactional
     public BookingDtoOut add(Long userId, BookingDto bookingDto) {
-        User user = UserMapper.toUser(userService.findById(userId));
-        Optional<Item> itemById = itemRepository.findById(bookingDto.getItemId());
-        if (itemById.isEmpty()) {
-            throw new NotFoundException("Вещь не найдена.");
-        }
-        Item item = itemById.get();
+        User user = UserMapper.toUser(userService.getUser(userId));
+        Item item = itemRepository.findById(bookingDto.getItemId())
+                .orElseThrow(() -> new NotFoundException("Вещь не найдена."));
         bookingValidation(bookingDto, user, item);
         Booking booking = BookingMapper.toBooking(user, item, bookingDto);
         return BookingMapper.toBookingOut(bookingRepository.save(booking));
@@ -49,13 +46,25 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     @Transactional
-    public BookingDtoOut update(Long userId, Long bookingId, Boolean approved) {
-        Booking booking = validateBookingDetails(userId, bookingId, true);
-        assert booking != null;
-        BookingStatus newStatus = approved ? BookingStatus.APPROVED : BookingStatus.REJECTED;
-        booking.setStatus(newStatus);
-        return BookingMapper.toBookingOut(bookingRepository.save(booking));
+    public BookingDtoOut update(Long id, Long userId, Boolean approved) {
+        Booking bookingFromDb = validateBookingDetails(id, userId, Boolean.TRUE);
+
+        if (bookingFromDb.getItem().getOwner().getId().equals(userId)) {
+            throw new ValidationException("Внимание! Заявку на бронирование вещи может подтвердить только " +
+                    "владелец вещи!");
+        }
+        if ((approved) && (bookingFromDb.getStatus().equals(BookingStatus.REJECTED)) || bookingFromDb.getStatus().equals(BookingStatus.WAITING)) {
+            bookingFromDb.setStatus(BookingStatus.APPROVED);
+            return BookingMapper.toBookingOut(bookingRepository.save(bookingFromDb));
+
+        } else if ((!approved) && (bookingFromDb.getStatus().equals(BookingStatus.APPROVED) || bookingFromDb.getStatus().equals(BookingStatus.WAITING))) {
+            bookingFromDb.setStatus(BookingStatus.REJECTED);
+            return BookingMapper.toBookingOut(bookingRepository.save(bookingFromDb));
+        } else {
+            throw new ValidationException("Внимание! Нельзя изменить статус заявки на уже имеющийся!");
+        }
     }
+
 
     @Override
     @Transactional
@@ -69,7 +78,7 @@ public class BookingServiceImpl implements BookingService {
     @Transactional
     public List<BookingDtoOut> findAll(Long bookerId, String state, Integer from, Integer size) {
         Pageable pageable = PageRequest.of(from / size, size);
-        userService.findById(bookerId);
+        userService.getUser(bookerId);
         switch (validState(state)) {
             case ALL:
                 return bookingRepository.findAllBookingsByBookerId(bookerId, pageable).stream()
@@ -108,7 +117,7 @@ public class BookingServiceImpl implements BookingService {
     @Transactional
     public List<BookingDtoOut> findAllOwner(Long ownerId, String state, Integer from, Integer size) {
         Pageable pageable = PageRequest.of(from / size, size);
-        userService.findById(ownerId);
+        userService.getUser(ownerId);
         switch (validState(state)) {
             case ALL:
                 return bookingRepository.findAllBookingsByOwnerId(ownerId, pageable).stream()
@@ -165,26 +174,23 @@ public class BookingServiceImpl implements BookingService {
     }
 
     private Booking validateBookingDetails(Long userId, Long bookingId, Boolean updating) {
-        Optional<Booking> bookingById = bookingRepository.findById(bookingId);
-        if (bookingById.isEmpty()) {
-            throw new NotFoundException("Бронь не найдена.");
-        }
-        Booking booking = bookingById.get();
+        Booking bookingById = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new NotFoundException("Бронь не найдена."));
+
         if (updating) {
-            if (!booking.getItem().getOwner().getId().equals(userId)) {
-                throw new NotFoundException("Пользователь не является владельцем");
+            if (!bookingById.getItem().getOwner().getId().equals(userId)) {
+                throw new ValidationException("Пользователь не является владельцем");
             }
-            if (!booking.getStatus().equals(BookingStatus.WAITING)) {
+            if (!bookingById.getStatus().equals(BookingStatus.WAITING)) {
                 throw new ValidationException("Бронь не cо статусом WAITING");
             }
-            return booking;
+            return bookingById;
         } else {
-            if (!booking.getBooker().getId().equals(userId)
-                    && !booking.getItem().getOwner().getId().equals(userId)) {
-                throw new NotFoundException("Пользователь не владелeц и не автор бронирования ");
+            if (!bookingById.getBooker().getId().equals(userId)
+                    && !bookingById.getItem().getOwner().getId().equals(userId)) {
+                throw new ValidationException("Пользователь не владелeц и не автор бронирования ");
             }
-            return booking;
+            return bookingById;
         }
     }
-
 }

@@ -38,7 +38,7 @@ public class RequestServiceIT {
 
     @Test
     void addNewRequest() {
-        UserDto addedUser = userService.add(userDto);
+        UserDto addedUser = userService.addUser(userDto);
         requestService.add(addedUser.getId(), requestDto);
 
         List<ItemRequestDtoOut> actualRequests = requestService.getUserRequests(addedUser.getId());

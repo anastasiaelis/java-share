@@ -1,6 +1,7 @@
 package ru.practicum.shareit.item.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -26,7 +27,7 @@ import ru.practicum.shareit.request.repository.ItemRequestRepository;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.UserDto;
 import ru.practicum.shareit.user.UserMapper;
-import ru.practicum.shareit.user.service.UserService;
+import ru.practicum.shareit.user.service.UserServiceImpl;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
@@ -41,20 +42,22 @@ import static java.util.stream.Collectors.toList;
 
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
+@Slf4j
+@Transactional
 public class ItemServiceImpl implements ItemService {
+
     private final ItemRepository itemRepository;
-    private final ItemRequestRepository itemRequestRepository;
-    private final CommentRepository commentRepository;
     private final BookingRepository bookingRepository;
-    private final UserService userService;
+    private final CommentRepository commentRepository;
+    private final UserServiceImpl userService;
+    private final ItemRequestRepository itemRequestRepository;
 
     @Override
     @Transactional
     public ItemDtoOut add(Long userId, ItemDto itemDto) {
-        UserDto user = userService.findById(userId);
+        Optional<UserDto> user = Optional.ofNullable(userService.getUser(userId));
         Item item = ItemMapper.toItem(itemDto);
-        item.setOwner((UserMapper.toUser(user)));
+        item.setOwner((UserMapper.toUser(user.get())));
         if (itemDto.getRequestId() != null) {
             item.setRequest(itemRequestRepository.getReferenceById(itemDto.getRequestId()));
         }
@@ -65,11 +68,11 @@ public class ItemServiceImpl implements ItemService {
     @Override
     @Transactional
     public ItemDtoOut update(Long userId, Long itemId, ItemDto itemDto) {
-        UserDto user = userService.findById(userId);
+        Optional<UserDto> user = Optional.ofNullable(userService.getUser(userId));
         Item item = itemRepository.findById(itemId)
                 .orElseThrow(() -> new NotFoundException("Вещи с " + itemId + " не существует")
                 );
-        if (!UserMapper.toUser(user).equals(item.getOwner())) {
+        if (!UserMapper.toUser(user.get()).equals(item.getOwner())) {
             throw new NotFoundException("Пользователь с id = " + userId +
                     " не является собственником вещи id = " + itemId);
         }
@@ -92,19 +95,17 @@ public class ItemServiceImpl implements ItemService {
     @Override
     @Transactional
     public ItemDtoOut findItemById(Long userId, Long itemId) {
-        userService.findById(userId);
-        Optional<Item> itemGet = itemRepository.findById(itemId);
-        if (itemGet.isEmpty()) {
-            throw new NotFoundException("У пользователя с id = " + userId + " не " +
-                    "существует вещи с id = " + itemId);
-        }
-        Item item = itemGet.get();
-        ItemDtoOut itemDtoOut = ItemMapper.toItemDtoOut(itemGet.get());
+        //  userService.getUser(userId);
+        Item itemGet = itemRepository.findById(itemId)
+                .orElseThrow(() -> new NotFoundException("У пользователя с id = " + userId + " не " +
+                        "существует вещи с id = " + itemId));
+
+        ItemDtoOut itemDtoOut = ItemMapper.toItemDtoOut(itemGet);
         itemDtoOut.setComments(getAllItemComments(itemId));
-        if (!item.getOwner().getId().equals(userId)) {
+        if (!itemGet.getOwner().getId().equals(userId)) {
             return itemDtoOut;
         }
-        List<Booking> bookings = bookingRepository.findAllByItemAndStatusOrderByStartAsc(item, BookingStatus.APPROVED);
+        List<Booking> bookings = bookingRepository.findAllByItemAndStatusOrderByStartAsc(itemGet, BookingStatus.APPROVED);
         List<BookingDtoOut> bookingDTOList = bookings
                 .stream()
                 .map(BookingMapper::toBookingOut)
@@ -119,7 +120,7 @@ public class ItemServiceImpl implements ItemService {
     @Override
     @Transactional
     public List<ItemDtoOut> findAll(Long userId, Integer from, Integer size) {
-        UserDto owner = userService.findById(userId);
+        Optional<UserDto> owner = Optional.ofNullable(userService.getUser(userId));
         Pageable pageable = PageRequest.of(from / size, size);
         List<Item> itemList = itemRepository.findAllByOwnerId(userId, pageable);
         List<Long> idList = itemList.stream()
@@ -151,7 +152,7 @@ public class ItemServiceImpl implements ItemService {
     @Override
     @Transactional
     public List<ItemDtoOut> search(Long userId, String text, Integer from, Integer size) {
-        userService.findById(userId);
+        userService.getUser(userId);
         Pageable pageable = PageRequest.of(from / size, size);
         if (text.isBlank()) {
             return Collections.emptyList();
@@ -165,15 +166,12 @@ public class ItemServiceImpl implements ItemService {
     @Override
     @Transactional
     public CommentDtoOut createComment(Long userId, CommentDto commentDto, Long itemId) {
-        User user = UserMapper.toUser(userService.findById(userId));
-        Optional<Item> itemById = itemRepository.findById(itemId);
+        User user = UserMapper.toUser(userService.getUser(userId));
 
-        if (itemById.isEmpty()) {
+        Item itemById = itemRepository.findById(itemId)
+                .orElseThrow(() -> new NotFoundException("У пользователя с id = " + userId + " не " +
+                        "существует вещи с id = " + itemId));
 
-            throw new NotFoundException("У пользователя с id = " + userId + " не " +
-                    "существует вещи с id = " + itemId);
-        }
-        Item item = itemById.get();
 
         List<Booking> userBookings = bookingRepository.findAllByUserBookings(userId, itemId, LocalDateTime.now());
 
@@ -181,7 +179,7 @@ public class ItemServiceImpl implements ItemService {
             throw new ValidationException("У пользователя с id   " + userId + " должно быть хотя бы одно бронирование предмета с id " + itemId);
         }
 
-        return CommentMapper.toCommentDtoOut(commentRepository.save(CommentMapper.toComment(commentDto, item, user)));
+        return CommentMapper.toCommentDtoOut(commentRepository.save(CommentMapper.toComment(commentDto, itemById, user)));
     }
 
     public List<CommentDtoOut> getAllItemComments(Long itemId) {
