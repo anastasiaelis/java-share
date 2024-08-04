@@ -9,16 +9,15 @@ import org.hibernate.annotations.CreationTimestamp;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.User;
 
-//import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+@Builder
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
-@Entity
+//@Entity
 @Table(name = "requests", schema = "public")
 public class ItemRequest {
     @Id
