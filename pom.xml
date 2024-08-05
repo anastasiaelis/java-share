@@ -5,25 +5,24 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.3.0</version>
+		<version>3.3.1</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 
 	<groupId>ru.practicum</groupId>
 	<artifactId>shareit</artifactId>
-	<packaging>pom</packaging>
 	<version>0.0.1-SNAPSHOT</version>
+	<packaging>pom</packaging>
 
 	<name>ShareIt</name>
-
-	<properties>
-		<java.version>21</java.version>
-	</properties>
-
 	<modules>
 		<module>gateway</module>
 		<module>server</module>
 	</modules>
+
+	<properties>
+		<java.version>21</java.version>
+	</properties>
 
 	<build>
 		<pluginManagement>
@@ -97,7 +96,7 @@
 				<plugin>
 					<groupId>org.jacoco</groupId>
 					<artifactId>jacoco-maven-plugin</artifactId>
-					<version>0.8.10</version>
+					<version>0.8.12</version>
 					<configuration>
 						<output>file</output>
 					</configuration>
@@ -190,4 +189,5 @@
 			</reporting>
 		</profile>
 	</profiles>
+
 </project>
